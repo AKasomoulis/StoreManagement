@@ -1,0 +1,54 @@
+package gr.uoa.di.storemanagement.web.supplier;
+
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.Supplier;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.dao.SupplierDaoImpl;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+public class DeleteSupplier extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private SupplierDaoImpl suppDao;
+	private Supplier supplier;
+	private String name;
+	
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		suppDao = new SupplierDaoImpl();
+		
+		supplier = new Supplier();
+		
+		/* Get supplier's name*/
+		name = (String)request.getParameter("hidden3");
+		
+		/* Get supplier from database*/
+		supplier = suppDao.read(name);
+		
+		/* Delete supplier*/
+		suppDao.delete(supplier);
+		
+		/* Redirection to servlet*/
+		url = "/AllUsers";
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

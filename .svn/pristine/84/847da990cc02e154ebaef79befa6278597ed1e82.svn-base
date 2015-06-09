@@ -1,0 +1,113 @@
+package gr.uoa.di.storemanagement.web;
+
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+public class Signup extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
+	private User user;
+	private String url;
+	private String username;
+	private String password;
+	private String rpassword;
+	private String firstname;
+	private String lastname;
+	private String email;
+	private PrintWriter pw;
+	private Pattern p;
+	private Matcher m;
+	private boolean matchFound;
+	private UserDaoImpl userDao;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+//		pw = response.getWriter();
+		
+		username = request.getParameter("username");
+		password = request.getParameter("password");
+		rpassword = request.getParameter("rpassword");
+		firstname = request.getParameter("firstname");
+		lastname = request.getParameter("lastname");
+		email = request.getParameter("email");
+		
+
+		
+        if(!username.equals("") && !password.equals("") && !firstname.equals("") && !lastname.equals("") && !email.equals("")) {
+
+        	if (password.equals(rpassword)) {
+        		
+//        		pw.println(username);
+//        		pw.println(password);
+//        		pw.println(rpassword);
+//        		pw.println(firstname);
+//        		pw.println(lastname);
+//        		pw.println(email);
+        		
+                p = Pattern.compile(".+@.+\\.[a-z]+");
+                m = p.matcher(email);
+                matchFound = m.matches();               
+                if (!matchFound) {
+                     request.setAttribute("error","invalid");
+                     url = "/Signup.jsp";
+                }
+                else {
+            		userDao = new UserDaoImpl();
+            		user = new User();
+            		user.setUsername(username);
+            		user.setPassword(password);
+            		user.setFirstName(firstname);
+            		user.setLastName(lastname);
+            		user.setEmail(email);
+                	if (!userDao.ifUserExists(user)) {
+                		userDao.create(user);
+                		url = "/Loggedin.jsp";
+                	}
+                	else {
+                		request.setAttribute("error", "sameusername");
+                		url = "/Signup.jsp";
+                	}
+                }	
+        	}
+        	else {
+                request.setAttribute("error", "errpassword");		
+                url = "/Signup.jsp";
+        	}
+        }
+        else {
+            request.setAttribute("error","nullvalue");
+            request.setAttribute("username", username);
+            request.setAttribute("password", password);
+            request.setAttribute("firstname", firstname);
+            request.setAttribute("lastname", lastname);
+            request.setAttribute("email", email);
+            url = "/Signup.jsp";
+        }
+        
+
+        context = getServletContext();
+        dispatcher = context.getRequestDispatcher(url);
+        dispatcher.forward(request, response);
+	}
+
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request,response);
+	}
+
+}

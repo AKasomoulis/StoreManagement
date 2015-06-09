@@ -1,0 +1,62 @@
+package gr.uoa.di.storemanagement.datalayer.entities.store;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+
+@Entity
+@Table(name = "Store")
+public class Store {
+	
+	@Id
+	@Column(name = "ST_Name", nullable = false)
+	private String name;
+	
+	@Column(name = "ST_Description", nullable = false, length = 255)
+	private String description;
+	
+	@Column(name = "ST_Isopen", nullable = false, length = 45)					//TODO
+	private boolean isOpen;
+	
+	@Column(name = "ST_Location", nullable = false, length = 45)
+	private String location;
+	
+	public Store() {
+		
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public boolean isOpen() {
+		return isOpen;
+	}
+
+	public void setOpen(boolean isOpen) {
+		this.isOpen = isOpen;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+}

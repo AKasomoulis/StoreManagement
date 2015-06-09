@@ -1,0 +1,74 @@
+package gr.uoa.di.storemanagement.web;
+
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.dao.SupplierDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.UserForApproval;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserForApprovalDaoImpl;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.List;
+
+
+public class AllUsers extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private UserForApprovalDaoImpl usAppDao;
+	private UserDaoImpl userDao;
+	private SupplierDaoImpl supplierDao;
+	private List<Object[]> approvedUsers;
+	private List<Object[]> suppliers;
+	private List<Object[]> storeKeepers;
+	private List<Object[]> customers;
+	private List<Object[]> notApprovedUsers;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+	private String url;
+       
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		usAppDao = new UserForApprovalDaoImpl();
+		userDao = new UserDaoImpl();
+		supplierDao = new SupplierDaoImpl();
+		
+		approvedUsers = userDao.getAllUsers();
+		request.setAttribute("approvedUsers", approvedUsers);
+		
+//		suppliers = userDao.getUserByRole("supplier");
+//		request.setAttribute("suppliers", suppliers);
+		suppliers = supplierDao.getAllSuppliers();
+		request.setAttribute("suppliers", suppliers);
+		
+		storeKeepers = userDao.getUserByRole("storekeeper");
+		request.setAttribute("storekeepers", storeKeepers);
+		
+		customers = userDao.getUserByRole("customer");
+		request.setAttribute("customers", customers);
+		
+		notApprovedUsers = usAppDao.getAllUsers();
+		request.setAttribute("notApprovedUsers", notApprovedUsers);
+		
+		
+		url = "/adminUsers.jsp";
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

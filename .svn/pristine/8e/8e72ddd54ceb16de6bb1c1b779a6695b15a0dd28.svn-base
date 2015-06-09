@@ -1,0 +1,54 @@
+package gr.uoa.di.storemanagement.web.user;
+
+import gr.uoa.di.storemanagement.datalayer.entities.user.UserForApproval;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserForApprovalDaoImpl;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class RejectUser extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private UserForApprovalDaoImpl userfaDao;
+	private UserForApproval usfa;
+	private String username;
+	
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+       
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		userfaDao = new UserForApprovalDaoImpl();
+		
+		usfa = new UserForApproval();
+		
+		/* Get not approved user's username*/
+		username = (String)request.getSession().getAttribute("notApprovedusername");
+		
+		/* Get user from database*/
+		usfa = userfaDao.read(username);
+	
+		/* Delete it from database (Reject)*/
+		userfaDao.delete(usfa);
+		
+		/* Redirection to jsp*/
+		url = "/AllUsers";
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

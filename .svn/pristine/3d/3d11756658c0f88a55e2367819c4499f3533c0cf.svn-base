@@ -1,0 +1,154 @@
+package gr.uoa.di.storemanagement.web.product;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.product.ProductPK;
+import gr.uoa.di.storemanagement.datalayer.entities.product.dao.ProductDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.storeproductlink.StoreProductLink;
+import gr.uoa.di.storemanagement.datalayer.entities.storeproductlink.StoreProductLinkPK;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.dao.SupplierDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.supplierproductlink.SupplierProductLink;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class UpdateProduct extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+	private ProductPK productPK;
+	
+	private ProductDaoImpl productDao;
+	private Product product;
+
+	private StoreProductLink old;
+	private Set<StoreProductLink> storeProducts;
+	private Set<StoreProductLink> storeProducts2;
+	private Set<SupplierProductLink> supplierProducts;
+	
+	private Store oldStore;
+	private Store newStore;
+	private StoreDaoImpl storeDao;
+	private SupplierDaoImpl supplierDao;
+	
+	private String productName;
+	private String serialNumber;
+	
+	private String newStoreName;
+	private int newQuantity;
+	
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+	private String url;
+       
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		storeDao = new StoreDaoImpl();
+		productDao = new ProductDaoImpl();
+		
+		productName = request.getParameter("prname");
+		if (productName == null) productName = "";
+
+		serialNumber = request.getParameter("prserialnumber");
+		if (serialNumber == null) serialNumber = "";
+
+		productPK = new ProductPK();
+		productPK.setName(productName);
+		productPK.setSerialNumber(serialNumber);
+		
+		product = new Product();
+		product = productDao.read(productPK);
+
+		
+		Enumeration f = request.getParameterNames();
+		Enumeration g = request.getAttributeNames();
+		
+		while (f.hasMoreElements()) {
+			response.getWriter().println("f" + f.nextElement());
+		}
+		
+		while (g.hasMoreElements()) {
+			response.getWriter().println("g" + g.nextElement());
+		}
+		
+		
+		response.getWriter().println("name: " + productName);
+		response.getWriter().println("serial number: " + serialNumber);
+		
+		if (product == null) {
+			url = "/ErrorPage.jsp";	
+		}
+		else {
+			storeProducts = product.getStores();
+			
+			List<StoreProductLink> l;
+			l = new ArrayList<StoreProductLink>(storeProducts);
+			
+			for (StoreProductLink old : l) {
+
+				String s = request.getParameter("checkbox" + old.getStoreName());
+			
+				if (request.getParameter("checkbox" + old.getStoreName()) != null) {
+					
+					newStoreName = request.getParameter("selectNewStore" + old.getStoreName());
+					newQuantity = Integer.valueOf(request.getParameter("newQuantity" + old.getStoreName()));
+					
+					oldStore = storeDao.read(old.getStoreName());
+					newStore = storeDao.read(newStoreName);
+
+					if (newQuantity == 0) {
+						//do nothing
+					}
+					else if (newQuantity == old.getQuantity()) {
+						oldStore.removeProduct(product);
+						oldStore.addProduct(product, 13, "yeah");
+						storeDao.update(oldStore);
+
+						oldStore.removeProduct(product);
+						storeDao.update(oldStore);
+
+						List<StoreProductLink> ff = new ArrayList<StoreProductLink>();
+						ff = oldStore.getProducts();
+
+						for (int i = 0; i != ff.size(); ++i) {
+							response.getWriter().println(ff.get(i).getProductName());
+						}
+
+						newStore.addProduct(product, newQuantity, "something");
+						
+						productDao.update(product);
+						storeDao.update(newStore);
+					}
+					else if (newQuantity < old.getQuantity()) {
+						
+						
+						
+					}
+				}
+			}
+			
+			url = "/AllProducts";
+		}
+		
+//		context = getServletContext();
+//		dispatcher = context.getRequestDispatcher(url);
+//		dispatcher.forward(request, response);
+		
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

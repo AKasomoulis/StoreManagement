@@ -1,0 +1,64 @@
+package gr.uoa.di.storemanagement.web.product;
+
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.dao.SupplierDaoImpl;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class AddProductB
+ */
+public class AddProductB extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	private String storeName;
+	private StoreDaoImpl storeDao;
+	private List<String> storeList;
+
+	private SupplierDaoImpl supplierDao;
+	private List<String> suppliers;
+
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		supplierDao = new SupplierDaoImpl();
+		storeDao = new StoreDaoImpl();
+		storeList = new ArrayList<String>();
+
+		storeName = request.getParameter("storename");
+
+		if (storeDao.read(storeName) != null) {
+			storeList.add(storeName);
+			suppliers = supplierDao.getAllSupplierNames();
+
+			request.setAttribute("storeNames", storeList);
+			request.setAttribute("supplierNames", suppliers);
+
+			url = "/addProduct.jsp";
+		} 
+		else {
+			// TODO: error page - store not found
+			url = "/index.jsp";
+		}
+
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

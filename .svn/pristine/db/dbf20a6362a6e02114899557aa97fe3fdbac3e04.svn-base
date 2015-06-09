@@ -1,0 +1,41 @@
+package gr.uoa.di.storemanagement.datalayer.entities.role;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "Role")
+public class Role {
+	
+	@Id
+	@Column(name = "ROL_Name", nullable = false, length = 45)
+	private String roleName;
+	
+	public Role() {
+		
+	}
+	
+	@Column(name = "ROL_Rights")
+	private int rights;
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public int getRights() {
+		return rights;
+	}
+
+	public void setRights(int rights) {
+		this.rights = rights;
+	}
+	
+	
+
+}

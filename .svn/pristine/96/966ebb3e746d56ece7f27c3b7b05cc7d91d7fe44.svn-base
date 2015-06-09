@@ -1,0 +1,50 @@
+package gr.uoa.di.storemanagement.web;
+
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserForApprovalDaoImpl;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class Account_activation extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+   
+	private String activationCode;
+	private String username;
+	private UserForApprovalDaoImpl uDao;
+	
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;	
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		uDao = new UserForApprovalDaoImpl();
+		
+		activationCode = request.getParameter("code");
+		
+		username = uDao.getUserWithCode(activationCode);
+		
+		if (username != null) {
+			url = "/ApproveUser?hidden=" + username;
+		}
+		else {
+			url = "ErrorPage - not found";
+		}
+		
+		response.getWriter().println(username);
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);		
+	}
+
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

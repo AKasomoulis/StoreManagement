@@ -1,0 +1,91 @@
+package gr.uoa.di.storemanagement.web;
+
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.UserForApproval;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserForApprovalDaoImpl;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.hibernate.Session;
+
+public class Login extends HttpServlet {
+
+	private static final long serialVersionUID = 1L;
+	private User user;
+	private String url = null;
+	private String username;
+	private String password;
+	private Session session;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+	private UserForApprovalDaoImpl usAppDao;
+	private UserDaoImpl userDao;
+
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+
+		username = request.getParameter("username");
+		password = request.getParameter("password");
+		user = new User();
+		user.setUsername(username);
+		user.setPassword(password);
+
+		usAppDao = new UserForApprovalDaoImpl();
+		userDao = new UserDaoImpl();
+
+		// check if this user is the administrator
+		if (userDao.isAdmin(username)) {
+			// check password
+			if (userDao.checkPassForUser(username, password)) {
+
+				url = "/adminHomePage.jsp";
+				request.setAttribute("username", username);
+
+			}
+
+		}
+		// check if this user is waiting validation
+		else if (usAppDao.userExists(username)) {
+			// check password
+			if (usAppDao.checkPassForUserApproval(username, password)) {
+
+				url = "/userForApproval.jsp";
+				request.setAttribute("username", username);
+
+			}
+		}
+		// check is this is a validated user
+		else if (userDao.userExists(username)) {
+			// check password
+			if (userDao.checkPassForUser(username, password)) {
+
+				url = "/userHomePage.jsp";
+				request.setAttribute("username", username);
+
+			}
+		}
+
+		if (url == null) {
+			url = "/login.jsp";
+			request.setAttribute("error", "false username or password");
+		}
+
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

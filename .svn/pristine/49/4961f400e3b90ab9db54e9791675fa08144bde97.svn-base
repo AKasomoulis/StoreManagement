@@ -1,0 +1,307 @@
+package gr.uoa.di.storemanagement.rights;
+
+/*
+ * 012 for Store, User, Product
+ */
+
+
+/* Singleton pattern*/
+public class Rights {
+	
+	private static Rights instance = null;
+	
+	private static int noneRight;
+	private static int readRight;
+	private static int writeRight;
+	
+	private Rights() {
+		noneRight = 0;
+		readRight = 1;
+		writeRight = 2;
+	}
+	
+	public static synchronized Rights getInstance() {
+		if (instance == null) {
+			instance = new Rights();
+		}
+		return instance;
+	}
+	
+	/* Check if user has read rights on stores*/
+	public boolean canReadStore(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights < 100)
+			return false;
+		else 
+			return true;
+	}
+	
+	/* Give read rights on stores*/
+	public int doReadStore(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights/100 == noneRight)
+			rights += 100;
+		else if (rights/100 == writeRight)
+			rights -= 100;
+		return rights;
+	}
+	
+	/* Check if user has write rights on stores*/
+	public boolean canWriteStore(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights/100 == writeRight)
+			return true;
+		else 
+			return false;
+	}
+	
+	/* Give write rights on stores*/
+	public int doWriteStore(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights/100 == noneRight)
+			rights += 200;
+		else if (rights/100 == readRight)
+			rights += 100;
+		return rights;
+	}
+	
+	/* Check if user has no rights on stores*/
+	public int noneRightStore(int rights) {
+		if (canReadStore(rights))
+			rights -= 100;
+		else if (canWriteStore(rights))
+			rights -= 200;
+		return rights;
+		
+	}
+	
+	/* Check if user has read rights on users*/
+	public boolean canReadUser(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights%100 > 20 || rights%100 < 10)
+			return false;
+		else 
+			return true;
+	}
+	
+	/* Give read rights on users*/
+	public int doReadUser(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights%100 < 10)
+			rights += 10;
+		else if (rights%100 > 20)
+			rights -= 10;
+		return rights;
+	}
+	
+	/* Check if user has wite rights on users*/
+	public boolean canWriteUser(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights%100 >= 20)
+			return true;
+		else 
+			return false;
+	}
+	
+	/* Give write rights on users*/
+	public int doWriteUser(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights%100 < 10)
+			rights += 20;
+		else if (rights%100 < 20)
+			rights += 10;
+		return rights;
+	}
+	
+	/* Check if user has no rights on users*/
+	public int noneRightUser(int rights) {
+		if (canReadUser(rights))
+			rights -= 10;
+		else if (canWriteUser(rights))
+			rights -= 20;
+		return rights;
+		
+	}
+	
+	/* Check if user has read rights on products*/
+	public boolean canReadProduct(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights % 10 == noneRight)
+			return false;
+		else 
+			return true;
+	}
+	
+	/* Give read rights on products*/
+	public int doReadProduct(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights%10 == noneRight)
+			rights += 1;
+		else if (rights%10 == writeRight)
+			rights -= 1;
+		return rights;
+	}
+	
+	/* Check if user has write rights on products*/
+	public boolean canWriteProduct(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights%10 == writeRight)
+			return true;
+		else 
+			return false;
+	}
+	
+	/* Give write rights on products*/
+	public int doWriteProduct(int rights) {
+		if (rights == 8)
+			rights = 10;
+		else if (rights == 9)
+			rights = 11;
+		else if (rights == 10)
+			rights = 12;
+		else if (rights == 16)
+			rights = 20;
+		else if (rights == 17)
+			rights = 21;
+		else if (rights == 18)
+			rights = 22;
+		if (rights%10 == noneRight)
+			rights += 2;
+		else if (rights%10 == readRight)
+			rights += 1;
+		return rights;
+	}
+	
+	/* Check if user has no rights on stores*/
+	public int noneRightProduct(int rights) {
+		if (canReadProduct(rights))
+			rights -= 1;
+		else if (canWriteProduct(rights))
+			rights -= 2;
+		return rights;
+		
+	}
+	
+
+}

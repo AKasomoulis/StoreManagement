@@ -1,0 +1,299 @@
+package gr.uoa.di.storemanagement.datalayer.entities.product.dao;
+
+import gr.uoa.di.storemanagement.datalayer.DataLayer;
+import gr.uoa.di.storemanagement.datalayer.dao.JpaDao;
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.product.ProductPK;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class ProductDaoImpl extends JpaDao<Product, ProductPK> implements ProductDao {
+
+	Logger log = LoggerFactory.getLogger(ProductDaoImpl.class);
+
+	/* Find a product according to name*/
+	public List<Product> findProductsByName(String name) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Product> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+			
+			queryString = "FROM Product pr WHERE pr.name = :name";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("name", name);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return result;
+	}
+
+	public List<Product> findProductsByDescription(String description) {
+		return null;
+	}
+
+	/* Check if a product exists in database*/
+	public boolean ProductExists(Product pr) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Product> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+			
+			queryString = "FROM Product pr WHERE pr.name = :name AND pr.serialNumber = :serialNumber";
+			query = entityManager.createQuery(queryString, Product.class);
+
+			query.setParameter("name", pr.getName());
+			query.setParameter("serialNumber", pr.getSerialNumber());
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return !result.isEmpty();
+	}
+
+	/* Get name and serial number of all products*/
+	public List<Object[]> getAllProducts() {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Object[]> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "SELECT pr.name, pr.serialNumber, pr.description FROM Product pr";
+			query = entityManager.createQuery(queryString);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return result;
+	}
+
+	public void deleteIt(String productName, String serialNumber) {
+		ProductPK pk = new ProductPK();
+		pk.setName(productName);
+		pk.setSerialNumber(serialNumber);
+		
+		this.delete(this.read(pk));
+	}
+
+	public Product readIt(String productName, String productSerialNumber) {
+		ProductPK pk = new ProductPK();
+		
+		pk.setName(productName);
+		pk.setSerialNumber(productSerialNumber);
+		
+		return this.read(pk);
+	}
+
+	public List<Object[]> searchByName(String searchQuery) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Object[]> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+			  			
+			queryString = "SELECT pr.name, pr.serialNumber, pr.description FROM Product pr WHERE pr.name LIKE :name";
+			query = entityManager.createQuery(queryString);
+			
+			query.setParameter("name", "%" + searchQuery + "%");
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return result;
+	}
+
+	public List<Object[]> searchByNameWholeWord(String searchQuery) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Object[]> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+			  			
+			queryString = "SELECT pr.name, pr.serialNumber, pr.description FROM Product pr WHERE pr.name = :name";
+			query = entityManager.createQuery(queryString);
+			
+			query.setParameter("name", searchQuery);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return result;
+	}
+
+	public List<Object[]> searchByDescription(String searchQuery) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Object[]> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+			  			
+			queryString = "SELECT pr.name, pr.serialNumber, pr.description FROM Product pr WHERE pr.description LIKE :description";
+			query = entityManager.createQuery(queryString);
+			
+			query.setParameter("description", "%" + searchQuery + "%");
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return result;
+	}
+
+	public List<Object[]> searchBySerialNumber(String searchQuery) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Object[]> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+			  			
+			queryString = "SELECT pr.name, pr.serialNumber, pr.description FROM Product pr WHERE pr.serialNumber LIKE :serialNumber";
+			query = entityManager.createQuery(queryString);
+			
+			query.setParameter("serialNumber", "%" + searchQuery + "%");
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return result;
+	}
+
+	public void changeQuantityBy(String productName, String serialNumber, int changedQuantity) {
+		Product p = this.readIt(productName, serialNumber);
+		p.setQuantity(p.getQuantity() + changedQuantity);
+		this.update(p);
+	}
+
+	public Long getNumberOfTotalProducts() {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Long> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+			  			
+			queryString = "SELECT COUNT(*) FROM Product pr";
+			query = entityManager.createQuery(queryString);
+			
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return result.get(0);
+	}
+
+
+}

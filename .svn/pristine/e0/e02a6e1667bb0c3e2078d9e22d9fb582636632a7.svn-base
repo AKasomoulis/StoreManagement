@@ -1,0 +1,164 @@
+package gr.uoa.di.storemanagement.datalayer.entities.user.dao;
+
+import gr.uoa.di.storemanagement.datalayer.DataLayer;
+import gr.uoa.di.storemanagement.datalayer.dao.JpaDao;
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.UserForApproval;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+
+public class UserForApprovalDaoImpl extends JpaDao<UserForApproval, String>
+		implements UserForApprovalDao {
+
+	Logger log = LoggerFactory.getLogger(UserDaoImpl.class);
+
+	/* Check if not approved user exists in database*/
+	public boolean userExists(UserForApproval us) {
+		return userExists(us.getUsername());
+	}
+
+	/* Check if not approved user exists in database*/
+	public boolean userExists(String username) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<UserForApproval> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "FROM UserForApproval us WHERE us.username = :username";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("username", username);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return !result.isEmpty();
+	}
+
+	/* Check if password is valid*/
+	public boolean checkPassForUserApproval(String username, String password) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<String> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "SELECT us.password FROM UserForApproval us WHERE us.username = :username";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("username", username);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		if (!result.isEmpty()) {
+			return result.get(0).equals(password);
+		}
+
+		return false;
+	}
+
+	/* Get the username, first name and last name of all users*/
+	public List<Object[]> getAllUsers() {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Object[]> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "SELECT us.username, us.firstName, us.lastName FROM UserForApproval us";
+			query = entityManager.createQuery(queryString);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return result;
+	}
+
+	public String getUserWithCode(String activationCode) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<String> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "SELECT us.username FROM UserForApproval us WHERE us.verificationCode = :activationCode";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("activationCode", activationCode);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		if (result.isEmpty()) {
+			return null;
+		}
+		return result.get(0);		
+	}
+	
+	
+
+
+}

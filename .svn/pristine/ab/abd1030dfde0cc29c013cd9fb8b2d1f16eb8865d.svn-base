@@ -1,0 +1,180 @@
+package gr.uoa.di.storemanagement.datalayer.entities.supplier.dao;
+
+import gr.uoa.di.storemanagement.datalayer.DataLayer;
+import gr.uoa.di.storemanagement.datalayer.dao.JpaDao;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.Supplier;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+
+public class SupplierDaoImpl extends JpaDao<Supplier, String> implements SupplierDao {
+
+	Logger log = LoggerFactory.getLogger(SupplierDaoImpl.class);
+
+	/* Get name and description of all suppliers*/
+	public List<Object[]> getAllSuppliers() {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Object[]> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "SELECT sup.name, sup.description FROM Supplier sup";
+			query = entityManager.createQuery(queryString);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+		
+		return result;
+	}
+
+	/* Get name of all suppliers*/
+	public List<String> getAllSupplierNames() {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<String> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "SELECT sup.name FROM Supplier sup";
+			query = entityManager.createQuery(queryString);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+		
+		return result;
+	}
+
+	/* Check if supplier exists in database*/
+	public boolean supplierExists(String name) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Supplier> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "FROM Supplier sup " + "WHERE sup.name = :name";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("name", name);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+		return !result.isEmpty();
+	}
+
+	public String getVerificationCode(String name) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<String> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "SELECT sup.verificationCode FROM Supplier sup WHERE sup.name = :name";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("name", name);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+		
+		return result.get(0);
+	}
+
+	public String checkoutCode(String code) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<String> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "SELECT sup.name FROM Supplier sup WHERE sup.verificationCode = :code";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("code", code);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+		
+		if (!result.isEmpty()) {
+			return result.get(0);
+		}
+		
+		return null;
+	}
+	
+
+}

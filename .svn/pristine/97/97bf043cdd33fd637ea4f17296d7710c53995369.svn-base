@@ -1,0 +1,112 @@
+package gr.uoa.di.storemanagement.datalayer.entities.store;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.storeproductlink.StoreProductLink;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+
+@Entity
+@Table(name = "Store")
+public class Store {
+	
+	@Id
+	@Column(name = "ST_Name", nullable = false)
+	private String name;
+	
+	@Column(name = "ST_Description", nullable = false, length = 255)
+	private String description;
+	
+	@Column(name = "ST_Isopen", nullable = false, length = 45)					//TODO
+	private boolean isOpen;
+	
+	@Column(name = "ST_Location", nullable = false, length = 45)
+	private String location;
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="store")
+//	@OneToMany(mappedBy="store")
+	private List<StoreProductLink> products = new ArrayList<StoreProductLink>();
+	
+	public Store() {
+		
+	}
+
+
+	public void addProduct(Product pr, int quantity, String lt) {
+		StoreProductLink link = new StoreProductLink();
+		
+		link.setProduct(pr);
+		link.setStore(this);
+		link.setStoreName(this.getName());
+		link.setProductName(pr.getName());
+		link.setProductSerialNumber(pr.getSerialNumber());
+		link.setLt(lt);
+		link.setQuantity(quantity);
+		
+		this.products.add(link);
+		pr.getStores().add(link);
+	}
+	
+
+	public void removeProduct(Product pr) {
+		StoreProductLink link = new StoreProductLink();
+		
+		link.setProduct(pr);
+		link.setStore(this);
+		link.setStoreName(this.getName());
+		link.setProductName(pr.getName());
+		link.setProductSerialNumber(pr.getSerialNumber());
+		link.setLt("stringaki");
+		link.setQuantity(2);
+
+		System.out.println("removed?: " + this.products.remove(link));
+		System.out.println("contains?: " + this.products.contains(link));
+		pr.getStores().remove(link);
+		System.out.println(pr.getStores().toString());
+		System.out.println(link.toString());
+	}
+	
+	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public boolean isOpen() {
+		return isOpen;
+	}
+
+	public void setOpen(boolean isOpen) {
+		this.isOpen = isOpen;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+}

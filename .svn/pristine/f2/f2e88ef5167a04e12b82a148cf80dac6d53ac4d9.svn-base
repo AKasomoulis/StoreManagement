@@ -1,0 +1,47 @@
+package gr.uoa.di.storemanagement.web.product;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.ProductPK;
+import gr.uoa.di.storemanagement.datalayer.entities.product.dao.ProductDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+public class AllProducts extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private ProductDaoImpl productDao;
+	private List<Object[]> products;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+	private String url;
+
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		productDao = new ProductDaoImpl();
+
+		products = productDao.getAllProducts();
+		
+		
+		request.setAttribute("products", products);
+		
+		url = "/adminProducts.jsp";
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

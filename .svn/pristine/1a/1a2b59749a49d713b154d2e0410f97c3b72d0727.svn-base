@@ -1,0 +1,58 @@
+package gr.uoa.di.storemanagement.web.store;
+
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.storeproductlink.dao.StoreProductLinkDaoImpl;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+public class StoreInfo extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private StoreDaoImpl storeDao;
+	private StoreProductLinkDaoImpl storeProductDao;
+	private String storeName;
+	private Store storeInfo;
+	private List<Object[]> storeProducts;
+
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+	private String url;
+
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		storeDao = new StoreDaoImpl();
+		
+		storeProductDao = new StoreProductLinkDaoImpl();
+
+	//	storeName = (String) request.getAttribute("storename");
+		storeName = (String) request.getParameter("hidden");
+		
+		storeInfo = storeDao.read(storeName);
+		request.setAttribute("storeinfo", storeInfo);
+		
+		storeProducts = storeProductDao.getProductsFromStore(storeName);
+		request.setAttribute("storeproducts", storeProducts);
+		
+		url = "/currentStore.jsp";
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

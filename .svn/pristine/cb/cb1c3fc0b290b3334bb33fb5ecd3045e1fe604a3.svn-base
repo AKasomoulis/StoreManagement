@@ -1,0 +1,59 @@
+package gr.uoa.di.storemanagement.web.store;
+
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+
+import java.io.IOException;
+import java.util.Enumeration;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+public class DeleteStore extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private String storeName;
+	private StoreDaoImpl storeDao;
+	private Store store;
+
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		/* Get all store information*/
+		storeName = (String) request.getParameter("stname");
+				
+		storeDao = new StoreDaoImpl();
+		
+		store = storeDao.read(storeName);
+		
+		if (store != null) {
+			/* Delete store from database*/
+			storeDao.delete(store);
+			
+			
+			
+			url = "/AllStores";		
+		}
+		else {
+			url = "/currentStore.jsp";	
+		}
+		
+		/* Redirection to jsp or servlet*/
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

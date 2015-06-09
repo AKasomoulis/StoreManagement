@@ -1,0 +1,47 @@
+package gr.uoa.di.storemanagement.datalayer;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.product.dao.ProductDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+
+public class Testing {
+
+	public static void main(String[] args) {
+		UserDaoImpl userDao = new UserDaoImpl();
+		
+		User us = new User();
+		us.setEmail("pao@in.gr");
+		us.setFirstName("Karolos");
+		us.setLastName("Peperigkos");
+		us.setUserName(5);
+		us.setPassword("7777776");
+		
+		userDao.create(us);
+		
+		
+		StoreDaoImpl storeDao = new StoreDaoImpl();
+		ProductDaoImpl productDao = new ProductDaoImpl();
+		
+		Store st = new Store();
+		st.setDescription("megastore");
+		st.setLocation("alimos");
+		st.setName("carrefour");
+		st.setOpen(true);
+		
+		
+		Product pr = new Product();
+		pr.setDescription("tis foras kai petas");
+		pr.setDimensions(2);
+		pr.setMass(13);
+		pr.setName("servlet");
+		pr.setSerial_number(392847);
+		pr.setType("string");
+		pr.setWeight(1);
+		
+		storeDao.create(st);
+		productDao.create(pr);
+	}
+}

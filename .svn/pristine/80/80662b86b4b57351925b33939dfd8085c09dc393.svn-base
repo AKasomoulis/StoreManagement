@@ -1,0 +1,451 @@
+package gr.uoa.di.storemanagement.datalayer;
+
+import java.util.List;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.product.dao.ProductDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.role.Role;
+import gr.uoa.di.storemanagement.datalayer.entities.role.dao.RoleDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.storeproductlink.dao.StoreProductLinkDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.Supplier;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.dao.SupplierDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.UserForApproval;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserForApprovalDaoImpl;
+
+public class Testing {
+
+	public static void main(String[] args) {
+		UserDaoImpl userDao = new UserDaoImpl();
+		ProductDaoImpl prodDao = new ProductDaoImpl();
+		SupplierDaoImpl supDao = new SupplierDaoImpl();
+		UserForApprovalDaoImpl ufaDao = new UserForApprovalDaoImpl();
+		StoreDaoImpl storeDao = new StoreDaoImpl();
+//		RoleDaoImpl roleDao = new RoleDaoImpl();
+
+		User us = new User();
+		us.setEmail("user1@in.gr");
+		us.setFirstName("Karolos");
+		us.setLastName("Dimitriou");
+		us.setUsername("caroll");
+		us.setPassword("7asd7");
+		Role role = new Role();
+		role.setRights(111);
+		role.setRoleName("customer");
+		us.setRole(role);
+		if (userDao.userExists(us)) {
+			userDao.update(us);
+		} 
+		else {
+			userDao.create(us);
+		}
+
+		User us2 = new User();
+		us2.setEmail("user2@in.gr");
+		us2.setFirstName("Giwrgos");
+		us2.setLastName("Pavlopoulos");
+		us2.setUsername("george");
+		us2.setPassword("7ad763");
+		Role role1 = new Role();
+		role1.setRights(111);
+		role1.setRoleName("customer");
+		us.setRole(role1);
+		if (userDao.userExists(us2)) {
+			userDao.update(us2);
+		} 
+		else {
+			userDao.create(us2);
+		}
+		
+		User us3 = new User();
+		us3.setEmail("user3@in.gr");
+		us3.setFirstName("Giwrgos");
+		us3.setLastName("Ioannou");
+		us3.setUsername("igeorge");
+		us3.setPassword("3ad7f3");
+		role1.setRights(111);
+		role1.setRoleName("customer");
+		us3.setRole(role1);
+		if (userDao.userExists(us3)) {
+			userDao.update(us3);
+		} 
+		else {
+			userDao.create(us3);
+		}
+		
+		User us4 = new User();
+		us4.setEmail("use4@in.gr");
+		us4.setFirstName("Kwstas");
+		us4.setLastName("Pavlopoulos");
+		us4.setUsername("kostasp");
+		us4.setPassword("7ad763");
+		role1.setRights(122);
+		role1.setRoleName("storekeeper");
+		us4.setRole(role1);
+		if (userDao.userExists(us4)) {
+			userDao.update(us4);
+		} 
+		else {
+			userDao.create(us4);
+		}
+		
+		User us5 = new User();
+		us5.setEmail("user5@in.gr");
+		us5.setFirstName("Vasilis");
+		us5.setLastName("Gewrgopoulos");
+		us5.setUsername("silis");
+		us5.setPassword("7asidyq7");
+		role1.setRights(111);
+		role1.setRoleName("customer");
+		us5.setRole(role1);
+		if (userDao.userExists(us5)) {
+			userDao.update(us5);
+		} 
+		else {
+			userDao.create(us5);
+		}
+		
+		User us6 = new User();
+		us6.setEmail("user6@in.gr");
+		us6.setFirstName("Giwrgos");
+		us6.setLastName("Tourpetas");
+		us6.setUsername("green");
+		us6.setPassword("13456gf");
+		role1.setRights(111);
+		role1.setRoleName("customer");
+		us6.setRole(role1);
+		if (userDao.userExists(us6)) {
+			userDao.update(us6);
+		} 
+		else {
+			userDao.create(us6);
+		}
+		
+		User us7 = new User();
+		us7.setEmail("user7@in.gr");
+		us7.setFirstName("Telis");
+		us7.setLastName("Kasomoulis");
+		us7.setUsername("telis");
+		us7.setPassword("asdas");
+		role1.setRights(111);
+		role1.setRoleName("customer");
+		us7.setRole(role1);
+		if (userDao.userExists(us7)) {
+			userDao.update(us7);
+		} 
+		else {
+			userDao.create(us7);
+		}
+		
+		User us8 = new User();
+		us8.setEmail("user8@in.gr");
+		us8.setFirstName("Giannis");
+		us8.setLastName("Labrakos");
+		us8.setUsername("glbrak");
+		us8.setPassword("13sdasdagf");
+		role1.setRights(122);
+		role1.setRoleName("storekeeper");
+		us8.setRole(role1);
+		if (userDao.userExists(us8)) {
+			userDao.update(us8);
+		} 
+		else {
+			userDao.create(us8);
+		}
+		
+		User us9 = new User();
+		us9.setEmail("user9@in.gr");
+		us9.setFirstName("Ioanna");
+		us9.setLastName("Swritiou");
+		us9.setUsername("joanna");
+		us9.setPassword("asdfghy");
+		role1.setRights(111);
+		role1.setRoleName("customer");
+		us9.setRole(role1);
+		if (userDao.userExists(us9)) {
+			userDao.update(us9);
+		} 
+		else {
+			userDao.create(us9);
+		}
+		
+		User us10 = new User();
+		us10.setEmail("user10@in.gr");
+		us10.setFirstName("Sofia");
+		us10.setLastName("Stefanakia");
+		us10.setUsername("sofiaaa");
+		us10.setPassword("342fagf");
+		role1.setRights(122);
+		role1.setRoleName("storekeeper");
+		us10.setRole(role1);
+		if (userDao.userExists(us10)) {
+			userDao.update(us10);
+		} 
+		else {
+			userDao.create(us10);
+		}
+		
+		
+		UserForApproval usf1 = new UserForApproval();
+		usf1.setEmail("userfa1@in.gr");
+		usf1.setFirstName("Petros");
+		usf1.setLastName("Kapellas");
+		usf1.setUsername("peter");
+		usf1.setPassword("7asdsdw7");
+		role.setRights(111);
+		role.setRoleName("customer");
+		usf1.setRole(role);
+		if (ufaDao.userExists(usf1)) {
+			ufaDao.update(usf1);
+		} 
+		else {
+			ufaDao.create(usf1);
+		}
+
+		UserForApproval usf2 = new UserForApproval();
+		usf2.setEmail("userfa2@in.gr");
+		usf2.setFirstName("Adwnis");
+		usf2.setLastName("Petrou");
+		usf2.setUsername("anton");
+		usf2.setPassword("7asdw7");
+		role.setRights(111);
+		role.setRoleName("customer");
+		usf2.setRole(role);
+		if (ufaDao.userExists(usf2)) {
+			ufaDao.update(usf2);
+		} 
+		else {
+			ufaDao.create(usf2);
+		}
+		
+		UserForApproval usf3 = new UserForApproval();
+		usf3.setEmail("userfa3@in.gr");
+		usf3.setFirstName("Dimitra");
+		usf3.setLastName("Sofianou");
+		usf3.setUsername("dim");
+		usf3.setPassword("aswrg");
+		role.setRights(111);
+		role.setRoleName("customer");
+		usf3.setRole(role);
+		if (ufaDao.userExists(usf3)) {
+			ufaDao.update(usf3);
+		} 
+		else {
+			ufaDao.create(usf3);
+		}
+		
+		UserForApproval usf4 = new UserForApproval();
+		usf4.setEmail("userfa4@in.gr");
+		usf4.setFirstName("Vasilis");
+		usf4.setLastName("Megas");
+		usf4.setUsername("bill");
+		usf4.setPassword("aswrdsfeg");
+		role.setRights(122);
+		role.setRoleName("storekeeper");
+		usf4.setRole(role);
+		if (ufaDao.userExists(usf4)) {
+			ufaDao.update(usf4);
+		} 
+		else {
+			ufaDao.create(usf4);
+		}
+		
+		
+		Supplier sup = new Supplier();
+		sup.setAddress("Swkratous 4, Athina");
+		sup.setCompanyName("OR AE");
+		sup.setDescription("Ximoi-Frouta-Anayiktika");
+		supDao.create(sup);
+		
+		Supplier sup1 = new Supplier();
+		sup1.setAddress("Argonaftwn 10, Thessaloniki");
+		sup1.setCompanyName("AUTO");
+		sup1.setDescription("Aftokinita-Mixanes-Skafi");
+		supDao.create(sup1);
+		
+		Supplier sup3 = new Supplier();
+		sup3.setAddress("Akadimis 4A, Athina");
+		sup3.setCompanyName("GreekOIL");
+		sup3.setDescription("Ellinika ladia");
+		supDao.create(sup3);
+		
+		Supplier sup4 = new Supplier();
+		sup4.setAddress("Ifaistou 4, Athina");
+		sup4.setCompanyName("Gamers");
+		sup4.setDescription("Paixnidia gia PCs kai oles tis konsoles");
+		supDao.create(sup4);
+		
+		
+	
+		Product pa1 = new Product();
+		pa1.setDescription("aftokinito");
+		pa1.setName("mazda");
+		pa1.setSerialNumber("123asd");
+		prodDao.create(pa1);
+
+		Product pa2 = new Product();
+		pa2.setDescription("gala");
+		pa2.setName("fage");
+		pa2.setSerialNumber("a324242e42");
+		prodDao.create(pa2);
+
+		Product pa3 = new Product();
+		pa3.setDescription("gala");
+		pa3.setName("olympos");
+		pa3.setSerialNumber("asdfrgtyu");
+		prodDao.create(pa3);
+		
+		Product pa4 = new Product();
+		pa4.setDescription("ladi");
+		pa4.setName("oliveOIL");
+		pa4.setSerialNumber("asdrty6frgtyu");
+		prodDao.create(pa4);
+		
+		Product pa5 = new Product();
+		pa5.setDescription("anayiktiko");
+		pa5.setName("coca-cola");
+		pa5.setSerialNumber("drty6frgtyu");
+		prodDao.create(pa5);
+		
+		Product pa6 = new Product();
+		pa6.setDescription("mixani");
+		pa6.setName("bmw");
+		pa6.setSerialNumber("asdrty6fr");
+		prodDao.create(pa6);
+		
+		Product pa7 = new Product();
+		pa7.setDescription("football");
+		pa7.setName("pes 2013");
+		pa7.setSerialNumber("akjhgt6frgtyu");
+		prodDao.create(pa7);
+		
+		Product pa8 = new Product();
+		pa8.setDescription("football");
+		pa8.setName("fifa 2013");
+		pa8.setSerialNumber("097767s");
+		prodDao.create(pa8);
+		
+		Product pa9 = new Product();
+		pa9.setDescription("ladi");
+		pa9.setName("altisOIL");
+		pa9.setSerialNumber("ikjuhyfrgtyu");
+		prodDao.create(pa9);
+		
+		Product pa10 = new Product();
+		pa10.setDescription("basketball");
+		pa10.setName("nba 2013");
+		pa10.setSerialNumber("apolkm8rgtyu");
+		prodDao.create(pa10);
+		
+		Product pa11 = new Product();
+		pa11.setDescription("ximos");
+		pa11.setName("fanta");
+		pa11.setSerialNumber("rtgh6frgtyu");
+		prodDao.create(pa11);
+		
+		Store st = new Store();
+		st.setDescription("AFTOKINITA");
+		st.setLocation("ATHINA");
+		st.setName("IOKASTI");
+		st.setIsOpen(1);
+		if (storeDao.storeExists(st)) {
+			storeDao.update(st);
+		}
+		else {
+			storeDao.create(st);
+		}
+		
+		Store st1 = new Store();
+		st1.setDescription("GAMES");
+		st1.setLocation("VOLOS");
+		st1.setName("SOKRATIS");
+		st1.setIsOpen(0);
+		if (storeDao.storeExists(st1)) {
+			storeDao.update(st1);
+		}
+		else {
+			storeDao.create(st1);
+		}
+		
+		Store st2 = new Store();
+		st2.setDescription("FROUTA-XIMOI");
+		st2.setLocation("ATHINA");
+		st2.setName("PERIKLIS");
+		st2.setIsOpen(0);
+		if (storeDao.storeExists(st2)) {
+			storeDao.update(st2);
+		}
+		else {
+			storeDao.create(st2);
+		}
+		
+		Store st3 = new Store();
+		st3.setDescription("LADI-FROYTA");
+		st3.setLocation("THESSALONIKI");
+		st3.setName("ADIGONI");
+		st3.setIsOpen(1);
+		if (storeDao.storeExists(st3)) {
+			storeDao.update(st3);
+		}
+		else {
+			storeDao.create(st3);
+		}
+		
+		Store st4 = new Store();
+		st4.setDescription("GAMES");
+		st4.setLocation("ATHINA");
+		st4.setName("AXILLEAS");
+		st4.setIsOpen(1);
+		if (storeDao.storeExists(st4)) {
+			storeDao.update(st4);
+		}
+		else {
+			storeDao.create(st4);
+		}
+
+	
+		sup.addProduct(pa2, 100);
+		sup.addProduct(pa3, 70);
+		sup.addProduct(pa11, 10);
+		supDao.update(sup);
+		
+		sup1.addProduct(pa1, 10000);
+		sup1.addProduct(pa6, 70000);
+		supDao.update(sup1);
+		
+		sup3.addProduct(pa4, 60);
+		sup3.addProduct(pa9, 50);
+		supDao.update(sup3);
+		
+		sup4.addProduct(pa10, 55);
+		sup4.addProduct(pa8, 45);
+		sup4.addProduct(pa7, 10);
+		supDao.update(sup4);
+
+		st.addProduct(pa10, 2, "asdfghj");
+		st.addProduct(pa8, 6, "poijvtf");
+		storeDao.update(st);
+		
+		st1.addProduct(pa2, 2, "dfghj");
+		st1.addProduct(pa3, 6, "ijvtf");
+		st1.addProduct(pa11, 120, "pjvtf");
+		storeDao.update(st1);
+		
+		st2.addProduct(pa10, 40, "dfhj");
+		st2.addProduct(pa8, 30, "ijvt");
+		st2.addProduct(pa7, 120, "pjvt");
+		storeDao.update(st2);
+		
+		st4.addProduct(pa7, 2, "dfghghj");
+		storeDao.update(st4);
+		
+		
+
+
+
+	}
+
+}

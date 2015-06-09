@@ -1,0 +1,53 @@
+package gr.uoa.di.storemanagement.web.role;
+
+import gr.uoa.di.storemanagement.datalayer.entities.role.Role;
+import gr.uoa.di.storemanagement.datalayer.entities.role.dao.RoleDaoImpl;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class RoleInfo extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private RoleDaoImpl roleDao;
+	private Role roleInfo;
+	private String roleName;
+	
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+	private String url;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		roleDao = new RoleDaoImpl();
+		
+		roleInfo = new Role();
+		
+		/* Get role's name*/
+		roleName = (String)request.getParameter("hidden");
+		
+		/* Get role froma database*/
+		roleInfo = roleDao.read(roleName);
+		
+		/* Set that role in request*/
+		request.setAttribute("roleInfo", roleInfo);
+
+		/* Redirection to jsp*/
+		url = "/currentRole.jsp";
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

@@ -1,0 +1,473 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="java.util.List"%>
+<%@page import="java.lang.String"%>
+<%@page import="gr.uoa.di.storemanagement.datalayer.entities.role.Role"%>
+<%@page import="gr.uoa.di.storemanagement.rights.Rights"%>
+
+<%@page import="gr.uoa.di.storemanagement.datalayer.entities.user.User"%>
+
+<!DOCTYPE html>
+
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+
+<head>
+<meta charset="UTF-8">
+
+<!-- Remove this line if you use the .htaccess -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+<meta name="viewport" content="width=device-width">
+
+<meta name="description"
+	content="Designa Studio, a HTML5 / CSS3 template.">
+<meta name="author"
+	content="Sylvain Lafitte, Web Designer, sylvainlafitte.com">
+
+<title>WAREHOUSES-general // e-Warehouse</title>
+
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<link rel="shortcut icon" type="image/png" href="favicon.png">
+
+<link
+	href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700'
+	rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="css/style.css">
+
+<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+
+
+
+<body>
+	<!-- Prompt IE 7 users to install Chrome Frame -->
+	<!--[if lt IE 8]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+
+	<div class="container">
+
+		<header id="navtop">
+			<a href="index.jsp" class="logo fleft"> <img src="img/logo2.png"
+				alt="Designa Studio">
+			</a>
+
+			<nav class="fright">
+				<ul>
+					<li><a href="index.html" class="navactive">Home</a></li>
+					<li><a href="about.html">Our Company</a></li>
+				</ul>
+				<ul>
+					<li><a href="services.html">Services</a></li>
+					<li><a href="works.html">Works</a></li>
+				</ul>
+				<ul>
+					<li><a href="contact.html">Contact</a></li>
+					<li><a href="register.html">Register</a></li>
+				</ul>
+				<!--			<ul>
+			    <li><a href="contact.html">Register</a></li>
+			</ul> -->
+			</nav>
+		</header>
+
+
+		<div class="services-page main grid-wrap">
+
+			<header class="grid col-full">
+				<hr>
+				<p class="fleft">
+					<%
+						out.print(session.getAttribute("username") + " home page");
+					%>
+				</p>
+			</header>
+
+
+			<aside class="grid col-one-quarter mq2-col-full">
+				<p class="mbottom">Lorem ipsum dolor sit amet, consectetuer
+					adipiscing elit. Morbi commodo, ipsum sed pharetra gravida, orci
+					magna rhoncus neque, id pulvinar odio lorem non turpis.</p>
+				<menu>
+					<ul>
+						<% 	User user = new User();
+							user = (User) session.getAttribute("user");
+							String username = user.getUsername();%>
+						
+						<% if (username.equals("admin")) { %>
+							<a href="adminGeneral.jsp">General</a><br>
+						<% } 
+							else {%>
+								<a href="userGeneral.jsp">General</a><br>
+						<% 	} %>	
+						<%if (Rights.getInstance().canReadStore(user.getRole().getRights()) || Rights.getInstance().canWriteStore(user.getRole().getRights())) {%>
+							<a href="<%=request.getContextPath()%>/AllStores">Stores</a><br>
+						<% } %>
+						
+						<%if (Rights.getInstance().canReadUser(user.getRole().getRights()) || Rights.getInstance().canWriteUser(user.getRole().getRights())) {%>
+							<a href="<%=request.getContextPath()%>/AllUsers">Users</a><br>
+						<% } %>
+						
+						<%if (Rights.getInstance().canReadProduct(user.getRole().getRights()) || Rights.getInstance().canWriteProduct(user.getRole().getRights())) {%>
+							<a href="<%=request.getContextPath()%>/AllProducts">Products</a><br>
+						<% } %>
+						
+						<% if (username.equals("admin")) { %>
+							<a href="<%=request.getContextPath()%>/AllRoles">Roles</a><br>
+						<% } %>
+					</ul>
+				</menu>
+				
+				<hr />
+				<button type="button" onclick="setRights()">Edit Fields</button> <br><br>
+				<button type="button id="apply" type="submit" onclick="submitUpdate()">Apply changes</button>
+				
+			</aside>
+
+			<section class="grid col-three-quarters mq2-col-full">
+				<div class="work-page main grid-wrap">
+
+					<header class="grid col-full">
+						<hr>
+						<p class="fleft">Project</p>
+					</header>
+
+					<%
+						Role role = null;
+						String roleName = null;
+						int roleRights = -1;
+					%>
+
+					<%
+						role = (Role) request.getAttribute("roleInfo");
+						roleName = role.getRoleName();
+						roleRights = role.getRights();
+					%>
+
+
+					<script>
+						function setRights() {
+							if (document.getElementById("role1").disabled == true)
+								document.getElementById("role1").disabled = false;
+							else
+								document.getElementById("role1").disabled = true;
+
+							if (document.getElementById("role2").disabled == true)
+								document.getElementById("role2").disabled = false;
+							else
+								document.getElementById("role2").disabled = true;
+
+							if (document.getElementById("role3").disabled == true)
+								document.getElementById("role3").disabled = false;
+							else
+								document.getElementById("role3").disabled = true;
+						}
+
+						function submitUpdate() {
+							document.getElementById("UpdateRole").submit();
+						}
+					</script>
+
+
+					<form action="UpdateRole" method="post" id="UpdateRole">
+						
+						<h4>Role Information</h4>
+						</p>
+						
+						<figure class="grid col-one-third mq1-col-one-half mq2-col-one-third mq3-col-full work_1">
+						<h5>Role Name</h5>
+							<h6>
+							<input type="hidden" name="hidden1" id="hidden1" value='<%out.print(roleName);%>'>
+								<%
+									out.print(roleName);
+								%>
+							</h6>
+						</figure>
+						<figure class="grid col-one-third mq1-col-one-half mq2-col-one-third mq3-col-full work_1">
+						<h5>Store Rights</h5>
+						<% 
+						if (roleName.equals("Admin"))
+							out.print("<h6>WRITE</h6>");
+						else {
+							if (Rights.getInstance().canWriteStore(roleRights)) {
+								out.print("<select name='role1' id='role1' disabled='disabled'>");
+								out.print("<option value='");
+								out.print("WRITE");
+								out.print("'>");
+								out.print("WRITE");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("READ");
+								out.print("'>");
+								out.print("READ");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("NONE");
+								out.print("'>");
+								out.print("NONE");
+								out.print("</option>");
+								out.print("</select>");
+							}
+							else if (Rights.getInstance().canReadStore(roleRights)) {
+								out.print("<select name='role1' id='role1' disabled='disabled'>");
+								out.print("<option value='");
+								out.print("READ");
+								out.print("'>");
+								out.print("READ");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("WRITE");
+								out.print("'>");
+								out.print("WRITE");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("NONE");
+								out.print("'>");
+								out.print("NONE");
+								out.print("</option>");
+								out.print("</select>");
+							}
+							else {
+								out.print("<select name='role1' id='role1' disabled='disabled'>");
+								out.print("<option value='");
+								out.print("NONE");
+								out.print("'>");
+								out.print("NONE");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("READ");
+								out.print("'>");
+								out.print("READ");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("WRITE");
+								out.print("'>");
+								out.print("WRITE");
+								out.print("</option>");
+								out.print("</select>");
+								
+							}
+						}
+						%>
+
+						</figure>
+						
+						<figure class="grid col-one-third mq1-col-one-half mq2-col-one-third mq3-col-full work_1">
+						<h5>User Rights</h5>
+						<% 
+						if (roleName.equals("Admin"))
+							out.print("<h6>WRITE</h6>");
+						else {
+							if (Rights.getInstance().canWriteUser(roleRights)) {
+								out.print("<select name='role2' id='role2' disabled='disabled'>");
+								out.print("<option value='");
+								out.print("WRITE");
+								out.print("'>");
+								out.print("WRITE");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("READ");
+								out.print("'>");
+								out.print("READ");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("NONE");
+								out.print("'>");
+								out.print("NONE");
+								out.print("</option>");
+								out.print("</select>");
+							}
+							else if (Rights.getInstance().canReadUser(roleRights)) {
+								out.print("<select name='role2' id='role2' disabled='disabled'>");
+								out.print("<option value='");
+								out.print("READ");
+								out.print("'>");
+								out.print("READ");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("WRITE");
+								out.print("'>");
+								out.print("WRITE");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("NONE");
+								out.print("'>");
+								out.print("NONE");
+								out.print("</option>");
+								out.print("</select>");
+							}
+							else {
+								out.print("<select name='role2' id='role2' disabled='disabled'>");
+								out.print("<option value='");
+								out.print("NONE");
+								out.print("'>");
+								out.print("NONE");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("READ");
+								out.print("'>");
+								out.print("READ");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("WRITE");
+								out.print("'>");
+								out.print("WRITE");
+								out.print("</option>");
+								out.print("</select>");
+								
+							}
+	
+						}
+						%>
+						</figure>
+						
+						<figure class="grid col-one-third mq1-col-one-half mq2-col-one-third mq3-col-full work_1">
+						<h5>Product Rights</h5>
+						<% 
+						if (roleName.equals("Admin"))
+							out.print("<h6>WRITE</h6>");
+						else {
+							if (Rights.getInstance().canWriteProduct(roleRights)) {
+								out.print("<select name='role3' id='role3' disabled='disabled'>");
+								out.print("<option value='");
+								out.print("WRITE");
+								out.print("'>");
+								out.print("WRITE");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("READ");
+								out.print("'>");
+								out.print("READ");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("NONE");
+								out.print("'>");
+								out.print("NONE");
+								out.print("</option>");
+								out.print("</select>");
+							}
+							else if (Rights.getInstance().canReadProduct(roleRights)) {
+								out.print("<select name='role3' id='role3' disabled='disabled'>");
+								out.print("<option value='");
+								out.print("READ");
+								out.print("'>");
+								out.print("READ");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("WRITE");
+								out.print("'>");
+								out.print("WRITE");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("NONE");
+								out.print("'>");
+								out.print("NONE");
+								out.print("</option>");
+								out.print("</select>");
+							}
+							else {
+								out.print("<select name='role3' id='role3' disabled='disabled'>");
+								out.print("<option value='");
+								out.print("NONE");
+								out.print("'>");
+								out.print("NONE");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("READ");
+								out.print("'>");
+								out.print("READ");
+								out.print("</option>");
+								out.print("<option value='");
+								out.print("WRITE");
+								out.print("'>");
+								out.print("WRITE");
+								out.print("</option>");
+								out.print("</select>");
+								
+							}
+						}
+						%>
+						</figure>						
+						
+						</p>
+						<% 
+							if (!roleName.equals("Admin")) {
+						%>
+<!--  						<button type="button" onclick="setRights()">Edit</button> -->
+<!-- 						<button id="apply" type="submit">Apply</button> -->
+						<%
+							}						
+						%>
+					</form>
+
+
+
+				</div>
+
+			</section>
+
+
+
+		</div>
+		<!--main-->
+		<div class="divide-top">
+			<footer class="grid-wrap">
+				<ul class="grid col-one-third social">
+
+					<li><a href="https://www.facebook.com">Facebook</a></li>
+					<li><a href="https://www.twitter.com">Twitter</a></li>
+					<li><a href="https://plus.google.com">Google+</a></li>
+					<li><a href="https://www.flickr.com">Flickr</a></li>
+				</ul>
+
+				<div class="up grid col-one-third ">
+					<a href="#navtop" title="Go back up">&uarr;</a>
+				</div>
+
+				<nav class="grid col-one-third ">
+					<ul>
+						<li><a href="index.html">Home</a></li>
+						<li><a href="about.html">Our Company</a></li>
+						<li><a href="services.html">Services</a></li>
+						<li><a href="works.html">Works</a></li>
+						<li><a href="contact.html">Contact</a></li>
+						<li><a href="register.html">Register</a></li>
+
+					</ul>
+				</nav>
+			</footer>
+		</div>
+
+	</div>
+
+	<!-- Javascript - jQuery -->
+	<script src="http://code.jquery.com/jquery.min.js"></script>
+	<script>
+		window.jQuery
+				|| document
+						.write('<script src="js/jquery-1.7.2.min.js"><\/script>')
+	</script>
+
+	<!--[if (gte IE 6)&(lte IE 8)]>
+<script src="js/selectivizr.js"></script>
+<![endif]-->
+
+	<script src="js/scripts.js"></script>
+
+	<!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID. -->
+	<script>
+		var _gaq = [ [ '_setAccount', 'UA-XXXXX-X' ], [ '_trackPageview' ] ];
+		(function(d, t) {
+			var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
+			g.src = ('https:' == location.protocol ? '//ssl' : '//www')
+					+ '.google-analytics.com/ga.js';
+			s.parentNode.insertBefore(g, s)
+		}(document, 'script'));
+	</script>
+</body>
+</html>

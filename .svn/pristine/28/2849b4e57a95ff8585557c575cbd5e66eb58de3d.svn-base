@@ -1,0 +1,8 @@
+package gr.uoa.di.storemanagement.datalayer.entities.lastmovements.dao;
+
+import gr.uoa.di.storemanagement.datalayer.dao.Dao;
+import gr.uoa.di.storemanagement.datalayer.entities.product.LastMovements;
+
+public interface LastMovementsDao  extends Dao<LastMovements, Integer> {
+
+}

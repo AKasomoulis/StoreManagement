@@ -1,0 +1,200 @@
+package gr.uoa.di.storemanagement.web.product;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.product.ProductPK;
+import gr.uoa.di.storemanagement.datalayer.entities.product.dao.ProductDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.Supplier;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.dao.SupplierDaoImpl;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class AddProduct extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	private String name;
+	private String serialNumber;
+	private String description;
+	private String type = null;
+	private int weight;
+	private int dimensions;
+	private int mass;
+	private int price;
+	private int quantity;
+	
+	private String storeName;
+	private String supplierName;
+	
+	private List<String> stores;
+	private List<String> suppliers;
+
+	private ProductPK productPK;
+	private ProductDaoImpl productDao;
+	private Product product;
+	private StoreDaoImpl storeDao;
+	private Store store;
+	private SupplierDaoImpl supplierDao;
+	private Supplier supplier;
+	
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		name = request.getParameter("name");
+		if (name == null) name = "";
+		
+		description = request.getParameter("description");
+		if (description == null) description = "";
+		
+		serialNumber = request.getParameter("serialNumber");
+		if (serialNumber == null) serialNumber = "";
+		
+		type = request.getParameter("type");
+		if (type == null) type = "";
+		
+		weight = 0;
+		mass = 0;
+		dimensions = 0;
+		
+		storeName = request.getParameter("prstore");
+		if (storeName == null) storeName = "";
+
+		supplierName = request.getParameter("prsupplier");
+		if (supplierName == null) supplierName = "";
+
+		if (request.getParameter("weight") == null || request.getParameter("weight").equals("")) {
+			weight = -1;
+		}
+		else {
+			weight = Integer.parseInt(request.getParameter("weight"));
+		}
+		if (request.getParameter("dimensions") != "") {
+			dimensions = Integer.parseInt(request.getParameter("dimensions"));
+		}
+		else {
+			dimensions = -1;
+		}
+		if (request.getParameter("mass") != "") {
+			mass = Integer.parseInt(request.getParameter("mass"));
+		}
+		else {
+			mass = -1;
+		}
+		if (request.getParameter("price") == null || request.getParameter("price").equals("")) {
+			price = -1;
+		}
+		else {
+			price = Integer.parseInt(request.getParameter("price"));
+		}
+		if (request.getParameter("quantity") != "") {
+			quantity = Integer.parseInt(request.getParameter("quantity"));
+		}
+		else {
+			quantity = -1;
+		}
+		
+
+		stores = (List<String>) request.getAttribute("storeNames");
+		suppliers = (List<String>) request.getAttribute("supplierNames");
+		
+//		dimensions = Integer.getInteger(request.getParameter("dimensions"));
+//		mass = Integer.getInteger(request.getParameter("mass"));
+		
+		if (!name.equals("") && !description.equals("") && !serialNumber.equals("") 
+				&& (price != -1) && (quantity != -1)) {
+			productPK = new ProductPK();
+			productPK.setName(name);
+			productPK.setSerialNumber(serialNumber);
+			
+			productDao = new ProductDaoImpl();
+			storeDao = new StoreDaoImpl();
+			supplierDao = new SupplierDaoImpl();
+			
+			// if a product with this name, and s/n does not exist
+			if (productDao.read(productPK) == null) {
+				store = new Store();
+				supplier = new Supplier();
+				product = new Product();
+				product.setName(name);
+				product.setSerialNumber(serialNumber);
+				product.setDescription(description);
+				product.setDimensions(dimensions);
+				product.setType(type);
+				product.setMass(mass);
+				
+				productDao.create(product);
+				
+				store = storeDao.read(storeName);
+				store.addProduct(product, quantity, description);
+				storeDao.update(store);
+
+				supplier = supplierDao.read(supplierName);
+				supplier.addProduct(product, price);
+				supplierDao.update(supplier);
+				url = "/AllProducts";
+//				response.getWriter().print("mpika");
+			}
+			else {
+				request.setAttribute("error", "product exists");
+
+				request.setAttribute("name", "");
+				request.setAttribute("serialNumber", "");
+				request.setAttribute("description", description);
+				request.setAttribute("type", type);
+				request.setAttribute("weight", weight);
+				request.setAttribute("dimensions", dimensions);
+				request.setAttribute("mass", mass);
+				request.setAttribute("price", price);
+				request.setAttribute("quantity", quantity);
+				request.setAttribute("storeNames", stores);
+				request.setAttribute("supplierNames", suppliers);
+				url = "/addProduct.jsp";
+			}
+		}
+		// null values
+		else {
+			request.setAttribute("error", "null value");
+
+			request.setAttribute("name", name);
+			request.setAttribute("serialNumber", serialNumber);
+			request.setAttribute("description", description);
+			request.setAttribute("type", type);
+			request.setAttribute("weight", weight);
+			request.setAttribute("dimensions", dimensions);
+			request.setAttribute("mass", mass);
+			request.setAttribute("price", price);
+			request.setAttribute("quantity", quantity);
+			request.setAttribute("storeNames", stores);
+			request.setAttribute("supplierNames", suppliers);
+			url = "/AddProductA";
+			
+//			response.getWriter().println("name:" + name);
+//			response.getWriter().println("serialNumber:" + serialNumber);
+//			response.getWriter().println("description:" + description);
+//			response.getWriter().println("type:" + type);
+//			response.getWriter().println("quantity:" + quantity);
+//			response.getWriter().println("price:" + price);
+//			response.getWriter().println("mass:" + mass);
+//			response.getWriter().println("weight:" + weight);
+		}	
+		
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);			
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

@@ -1,0 +1,64 @@
+package gr.uoa.di.storemanagement.datalayer.entities.user.dao;
+
+import gr.uoa.di.storemanagement.datalayer.DataLayer;
+import gr.uoa.di.storemanagement.datalayer.dao.JpaDao;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+
+public class UserDaoImpl extends JpaDao<User, String> implements UserDao {
+
+	Logger log = LoggerFactory.getLogger(UserDaoImpl.class);
+	
+	public List<User> findActiveUsers() {
+		EntityManager entityManager = DataLayer.getEntityManager();
+		
+		String queryString;
+		Query query;
+		EntityTransaction tx = null;
+		List<User> result = null;
+		
+		try
+		{
+			tx = entityManager.getTransaction();
+			tx.begin();
+			
+			queryString = "from User us where us.name = : name";
+			query = entityManager.createQuery(queryString,User.class);
+			query.setParameter("name", "Vasilis");
+			result = query.getResultList();
+	
+			tx.commit();
+			
+			log.debug("Find active users ");
+			log.debug(result.size() + " results");
+			for (User us : (List<User>) result) {
+				log.debug("User (" + us.getFirstName() + ")");
+			}
+		}catch(RuntimeException e)
+		{
+			if(tx != null && tx.isActive()) tx.rollback();
+			throw e;
+		}finally
+		{
+			entityManager.close();
+		}
+	
+		return result;
+	}
+
+	public User systemUser() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+}

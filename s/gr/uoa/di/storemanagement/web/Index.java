@@ -1,0 +1,43 @@
+package gr.uoa.di.storemanagement.web;
+
+import gr.uoa.di.storemanagement.utilities.CookieUtilities;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+public class Index extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+    
+	private String username;
+	
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		username = CookieUtilities.getCookieValue(request, "username", null);
+		
+		if (username != null) {
+			request.setAttribute("username", username);
+		}
+		
+		url = "/WEB-INF/index.jsp";
+		
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);		
+	}
+	
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

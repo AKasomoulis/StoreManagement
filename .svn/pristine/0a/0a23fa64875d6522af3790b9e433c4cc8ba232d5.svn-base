@@ -1,0 +1,53 @@
+package gr.uoa.di.storemanagement.web.user;
+
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.UserForApproval;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserForApprovalDaoImpl;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class DeleteUser extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private UserDaoImpl userDao;
+	private User user;
+	private String username;
+	
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		userDao = new UserDaoImpl();
+		
+		user = new User();
+		
+		username = (String)request.getSession().getAttribute("username");
+		
+		user = userDao.read(username);
+		
+		userDao.delete(user);
+		
+		url = "/AllUsers";
+		
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);	
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

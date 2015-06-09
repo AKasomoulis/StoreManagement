@@ -1,0 +1,130 @@
+package gr.uoa.di.storemanagement.web.role;
+
+import gr.uoa.di.storemanagement.datalayer.entities.role.Role;
+import gr.uoa.di.storemanagement.datalayer.entities.role.dao.RoleDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.rights.Rights;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+
+public class UpdateRole extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private HttpSession session;
+	private User user;
+	
+	private int rights;
+	private String roleName;
+	private String storeRights;
+	private String userRights;
+	private String productRights;
+	private Role role;
+	private RoleDaoImpl roleDao;
+	
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+       
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		session = request.getSession(true);
+		user = (User)session.getAttribute("user");
+
+		// if there is an active session - user is logged in
+		if (user != null) {
+			
+			// if this user has the rights to view this page
+			if (user.getRole().getRoleName().equals("Admin")) {
+				
+				/* Get all role information*/
+				roleName = (String) request.getParameter("hidden1");
+				
+				storeRights = (String) request.getParameter("role1");
+				if (storeRights == null) storeRights = "";
+				
+				userRights = (String) request.getParameter("role2");
+				if (userRights == null) userRights = "";
+				
+				productRights = (String) request.getParameter("role3");
+				if (productRights == null) productRights = "";
+				
+				/* If there is no null information*/
+				if (!storeRights.equals("") && !userRights.equals("") && !productRights.equals("")) {
+					
+					role = new Role();
+					roleDao = new RoleDaoImpl();
+					
+					/* Get role from database*/
+					role = roleDao.read(roleName);
+					
+					rights = 0;
+					
+					if (storeRights.equals("NONE"))
+					//	rights += Rights.getInstance().noneRightStore(rights);
+						rights += 0;
+					else if (storeRights.equals("WRITE"))
+						rights = Rights.getInstance().doWriteStore(rights);
+					//	rights += 200;
+					else if (storeRights.equals("READ"))
+						rights = Rights.getInstance().doReadStore(rights);
+					//	rights += 100;
+					
+					if (userRights.equals("NONE"))
+					//	rights = Rights.getInstance().noneRightUser(rights);
+						rights += 0;
+					else if (userRights.equals("WRITE"))
+						rights = Rights.getInstance().doWriteUser(rights);
+					//	rights += 20;
+					else if (userRights.equals("READ"))
+						rights = Rights.getInstance().doReadUser(rights);
+					//	rights += 10;
+					
+					if (productRights.equals("NONE"))
+					//	rights = Rights.getInstance().noneRightProduct(rights);
+						rights += 0;
+					else if (productRights.equals("WRITE"))
+						rights = Rights.getInstance().doWriteProduct(rights);
+					//	rights += 2;
+					else if (productRights.equals("READ"))
+						rights = Rights.getInstance().doReadProduct(rights);
+					//	rights += 1;
+					
+					role.setRights(rights);
+					
+					/* Update role in database*/
+					roleDao.update(role);
+				}
+				
+				/* Redirection to jsp or servlet*/
+				url = "/AllRoles";
+			}
+			else {
+				url = "/WEB-INF/noRights.jsp";
+			}
+		}
+		else {
+			url = "/WEB-INF/notLoggedIn.jsp";
+		}
+	
+		
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

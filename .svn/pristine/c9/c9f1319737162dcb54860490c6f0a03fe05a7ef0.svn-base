@@ -1,0 +1,59 @@
+package gr.uoa.di.storemanagement.web.supplier;
+
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.Supplier;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.dao.SupplierDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.supplierproductlink.dao.SupplierProductLinkDaoImpl;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class SupplierInfo extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private SupplierDaoImpl suppDao;
+	private Supplier supplierInfo;
+	private String name;
+	private SupplierProductLinkDaoImpl suppProductDao;
+	private List<Object[]> supplierProducts;
+
+	
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+	private String url;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		suppDao = new SupplierDaoImpl();
+		
+		suppProductDao = new SupplierProductLinkDaoImpl();
+		
+		supplierInfo = new Supplier();
+		
+		name = (String)request.getParameter("supphidden");
+		
+		supplierInfo = suppDao.read(name);
+		
+		request.setAttribute("supplierinfo", supplierInfo);
+		
+		supplierProducts = suppProductDao.getProductsFromSupplier(name);
+		request.setAttribute("supplierproducts", supplierProducts);
+		
+		url = "/currentSupplier.jsp";
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

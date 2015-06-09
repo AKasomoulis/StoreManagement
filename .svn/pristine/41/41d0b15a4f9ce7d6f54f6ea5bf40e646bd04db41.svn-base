@@ -1,0 +1,38 @@
+package gr.uoa.di.storemanagement.web;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+public class Signout extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private HttpSession session;
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+       
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
+		session=request.getSession(true);
+		session.removeAttribute("user");
+		session.removeAttribute("cartList");
+
+		url="/Index";
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+}

@@ -1,0 +1,130 @@
+package gr.uoa.di.storemanagement.datalayer.entities.user.dao;
+
+import gr.uoa.di.storemanagement.datalayer.DataLayer;
+import gr.uoa.di.storemanagement.datalayer.dao.JpaDao;
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+
+public class UserDaoImpl extends JpaDao<User, String> implements UserDao {
+
+	Logger log = LoggerFactory.getLogger(UserDaoImpl.class);
+
+	public boolean userExists(User us) {
+		return userExists(us.getUsername());
+	}
+
+	public boolean userExists(String username) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<User> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "FROM User us " + "WHERE us.username = :username";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("username", username);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+		return !result.isEmpty();
+	}
+
+	public boolean checkPassForUser(String username, String password) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<String> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "SELECT us.password FROM User us " + "WHERE us.username = :username";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("username", username);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+		
+		if (!result.isEmpty()) {
+			return result.get(0).equals(password);
+		}
+
+		return false;
+	}
+
+
+	public boolean isAdmin(String username) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	public List<String> getAllUsers() {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<String> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			queryString = "SELECT us.username FROM User us";
+			query = entityManager.createQuery(queryString);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+		
+		return result;
+
+	}
+
+
+
+}

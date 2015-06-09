@@ -1,0 +1,137 @@
+package gr.uoa.di.storemanagement.web.cart;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.productuser.ProductUser;
+import gr.uoa.di.storemanagement.datalayer.entities.productuser.dao.ProductUserDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.sales.Invoice;
+
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+
+public class CartCheckout extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private String invoice;
+	private String productsInfo;
+	private String ammount;
+	private int totalAmmount;
+	private String quantity;
+	private String price;
+	private HttpSession session;
+	private Product product;
+	private User user;
+	private Date dNow;
+	private DateFormat ft;
+	private Invoice newInvoice;
+	private ProductUser productUser;
+	private ProductUserDaoImpl productUserDao;
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+	private ArrayList<Object[]> cartList;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		dNow = new Date();
+      	ft = new SimpleDateFormat("yyyy.MM.dd");
+		
+		session = request.getSession(true);
+		
+		product = new Product();
+		
+		cartList = (ArrayList<Object[]>)session.getAttribute("cartList");
+		user = (User)session.getAttribute("user");
+		
+		productUser = new ProductUser();
+		productUserDao = new ProductUserDaoImpl();
+		
+		productsInfo = "";		
+		totalAmmount = 0;
+		
+		for (int i = 0 ; i != cartList.size() ; i++) {
+			product = (Product)cartList.get(i)[0];
+			quantity = (String) cartList.get(i)[2];
+			ammount = (String) cartList.get(i)[1];
+			price = String.valueOf(Double.parseDouble(ammount)/Integer.parseInt(quantity));
+			
+			productUser.setUsername(user.getUsername());
+			productUser.setOrder(i);
+			productUser.setProductName(product.getName());
+			productUser.setSerialNumber(product.getSerialNumber());
+			productUser.setQuantity(Integer.parseInt(quantity));
+			productUser.setPrice(Double.parseDouble(price));
+			productUser.setTime(Calendar.getInstance().getTime());
+			
+			if (!productUserDao.orderExists(productUser)) 
+				productUserDao.update(productUser);
+			else
+				productUserDao.create(productUser);
+			
+			
+			
+			productsInfo += "Product " + (i+1) + " \n" +
+			"Name: " + product.getName() + "\n" +
+			"Serial Number: " + product.getSerialNumber() + "\n"+
+			"Description: " + product.getDescription() + "\n" +
+			"Quantity: " + quantity + "\n"+
+			"Price: " + price + "€\n" +
+			"Amount: " + ammount + "€\n"+
+			"-------------------------------------------------------------------------------------\n";
+			
+			totalAmmount += Double.parseDouble(ammount);
+			
+		}
+		
+		invoice =
+		        "E-WareHouse  Company\n"+
+		        "ABN 99 999 999 999\n"+
+		        "Telephone +(30) 210-7275217\n"+
+		        "Panepistimioupoli, Ilisia, Athina, 15784\n"+
+		        "Email EWareHouse@hotmail.com\n"+
+		        "Web www.EWarehouse.com\n"+
+		        "\n"+
+		        "\n"+
+		        "DATE: " + ft.format(dNow) +  " \n"+
+		        "___________________________________________________________________________\n"+
+		        "Bill to:\n"+
+		        "       First Name: "+user.getFirstName()+"\n"+
+				"       Last Name: " + user.getLastName()+"\n"+
+				"       E-mail: " + user.getEmail()+"\n\n"+
+				"Payment terms: NET 30 DAY\n"+
+				"Freight terms: FCA DESTINATION\n\n\n"+
+				 "___________________________________________________________________________\n"
+				+productsInfo+"\n"+
+				"____________________________________________________________________________\n"+
+				"                                                         Total amount: "+String.valueOf(totalAmmount)+"€";
+		
+		
+		newInvoice = new Invoice();
+		
+		newInvoice.createPdf(invoice);
+		
+		url = "/AllProducts";	
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

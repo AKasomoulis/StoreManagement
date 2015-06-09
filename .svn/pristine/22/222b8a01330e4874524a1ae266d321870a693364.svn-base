@@ -1,0 +1,60 @@
+package gr.uoa.di.storemanagement.web;
+
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.hibernate.Session;
+
+public class Login extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
+	private User user;
+	private String url;
+	private String username;
+	private String password;
+	private Session session;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+
+	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+		
+        session = (Session) request.getSession(true);
+        username = request.getParameter("Username");
+        password = request.getParameter("password");
+        user = new User();
+        user.setUsername(7);
+        user.setPassword(password);
+        
+        if (userInDB(user)) {
+        	if (userIsAdmin(user))
+        		url = "/Adminhome.jsp";
+        	else {
+        		url = "/Userhome.jsp";
+        		((ServletContext) session).setAttribute("user",user); 
+        	} 	
+        }
+        else {
+        	url = "/Loggin.jsp";
+        	request.setAttribute("error","unknown");
+        	/* The username or password is incorrect*/
+        	
+        }
+        
+        context = getServletContext();
+        dispatcher = context.getRequestDispatcher(url);
+        dispatcher.forward(request, response);  	
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+}

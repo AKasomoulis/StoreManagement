@@ -1,0 +1,10 @@
+package gr.uoa.di.storemanagement.datalayer.entities.storeproductlink.dao;
+
+import gr.uoa.di.storemanagement.datalayer.dao.JpaDao;
+import gr.uoa.di.storemanagement.datalayer.entities.storeproductlink.StoreProductLink;
+import gr.uoa.di.storemanagement.datalayer.entities.storeproductlink.StoreProductLinkPK;
+
+public class StoreProductLinkDaoImpl extends JpaDao<StoreProductLink, StoreProductLinkPK> implements StoreProductLinkDao{
+
+}
+

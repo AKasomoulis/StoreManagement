@@ -1,0 +1,53 @@
+package gr.uoa.di.storemanagement.datalayer.entities.supplier;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+
+@Entity
+@Table(name = "Supplier")
+public class Supplier {
+	
+	@Id
+	@Column(name = "SUP_Name", nullable = false)
+	private String companyName;
+	
+	@Column(name = "SUP_Address", nullable = false, length = 45)
+	private String address;
+	
+	@Column(name = "SUP_Description", nullable = false, length = 255)
+	private String description;
+	
+	public void Supplier() {
+		
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	
+
+}

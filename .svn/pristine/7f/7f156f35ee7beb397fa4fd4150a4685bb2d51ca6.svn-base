@@ -1,0 +1,62 @@
+package gr.uoa.di.storemanagement.datalayer.entities.storeproductlink;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+
+@Entity
+@IdClass(StoreProductLinkPK.class)
+@Table(name = "StoreProductLink")
+public class StoreProductLink {
+
+	@Id
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "SPL_Storename", nullable = false)
+	private Store storeName;
+
+	@Id
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "SPL_Productname", nullable = false)
+	private Product productName;
+
+	private int quantity;
+	private String lt;
+	
+	public StoreProductLink() {
+		
+	}
+	
+	public Store getStoreName() {
+		return storeName;
+	}
+	public void setStoreName(Store storeName) {
+		this.storeName = storeName;
+	}
+	public Product getProductName() {
+		return productName;
+	}
+	public void setProductName(Product productName) {
+		this.productName = productName;
+	}
+	public int getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+	public String getLt() {
+		return lt;
+	}
+	public void setLt(String lt) {
+		this.lt = lt;
+	}
+}

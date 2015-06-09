@@ -1,0 +1,134 @@
+package gr.uoa.di.storemanagement.datalayer;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.product.dao.ProductDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+
+public class Testing {
+
+	public static void main(String[] args) {
+		UserDaoImpl userDao = new UserDaoImpl();
+		ProductDaoImpl prodDao = new ProductDaoImpl();
+		
+		User us = new User();
+		us.setEmail("pao@in.gr");
+		us.setFirstName("Karolos");
+		us.setLastName("Peperigkos");
+<<<<<<< .mine
+		us.setUsername("myname");
+=======
+		us.setUsername("tiktak");
+>>>>>>> .r41
+		us.setPassword("7777776");
+		
+<<<<<<< .mine
+		if (userDao.UserExists(us)) {
+=======
+		if (userDao.userExists(us)) {
+>>>>>>> .r41
+			userDao.update(us);
+		} 
+		else {
+			userDao.create(us);
+		}
+		
+		Product pa = new Product();
+		pa.setDescription("gala");
+		pa.setName("delta");
+		pa.setSerialNumber(4602767);
+
+		Product pa1 = new Product();
+		pa1.setDescription("gala");
+		pa1.setName("fage");
+		pa1.setSerialNumber(353251);
+
+		Product pa11 = new Product();
+		pa11.setDescription("gala");
+		pa11.setName("olympos");
+		pa11.setSerialNumber(580989);
+
+		Product paa = new Product();
+		paa.setDescription("gala");
+		paa.setName("moraki");
+		paa.setSerialNumber(819432);
+		
+		Store st = new Store();
+		st.setDescription("d");
+		st.setLocation("lo");
+		st.setName("carrefour");
+		st.setOpen(true);
+
+		Store st1 = new Store();
+		st1.setDescription("d");
+		st1.setLocation("lo");
+		st1.setName("panathinaikos");
+		st1.setOpen(true);
+
+		Store st11 = new Store();
+		st11.setDescription("d");
+		st11.setLocation("lo");
+		st11.setName("vouli");
+		st11.setOpen(true);
+
+		Store st2 = new Store();
+		st2.setDescription("d");
+		st2.setLocation("lo");
+		st2.setName("alfa romeo");
+		st2.setOpen(true);
+		
+		StoreDaoImpl storeDao = new StoreDaoImpl();
+		
+		if (storeDao.storeExists(st2)) {
+			storeDao.update(st2);
+		}
+		else {
+			storeDao.create(st2);
+		}
+
+		prodDao.create(paa);
+		prodDao.create(pa1);
+		st2.addProduct(paa, 2, "stringaki");
+		st2.addProduct(pa1, 6, "tangaki");
+		st2.removeProduct(paa);
+		
+		storeDao.update(st2);
+//		prodDao.delete(paa);
+		
+
+		if (storeDao.storeExists(st)) {
+			storeDao.update(st);
+		}
+		else {
+			storeDao.create(st);
+		}
+		
+		if (storeDao.storeExists(st1)) {
+			storeDao.update(st1);
+		}
+		else {
+			storeDao.create(st1);
+		}
+		
+		if (storeDao.storeExists(st11)) {
+			storeDao.update(st11);
+		}
+		else {
+			storeDao.create(st11);
+		}
+		
+		if (prodDao.ifProductExists(pa)) {
+			prodDao.update(pa);
+		}
+		else {
+			prodDao.create(pa);
+		}
+//		prodDao.create(pa1);
+//		prodDao.create(pa11);
+//		prodDao.create(paa);
+
+	}
+
+}

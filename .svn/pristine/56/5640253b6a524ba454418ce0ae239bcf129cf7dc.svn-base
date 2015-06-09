@@ -1,0 +1,14 @@
+package gr.uoa.di.storemanagement.datalayer.entities.user.dao;
+
+import gr.uoa.di.storemanagement.datalayer.dao.Dao;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+
+import java.util.List;
+import java.util.UUID;
+
+
+public interface UserDao  extends Dao<User, String> {
+	public List<User> findActiveUsers();
+	public boolean userExists(User us);
+	public User systemUser();
+}

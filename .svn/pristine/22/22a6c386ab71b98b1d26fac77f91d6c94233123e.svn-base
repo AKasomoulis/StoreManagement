@@ -1,0 +1,90 @@
+package gr.uoa.di.storemanagement.web;
+
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class AddStore extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private String url;
+	private String name;
+	private String description;
+	private String status;
+	private boolean isOpen;
+	private String location;
+	private StoreDaoImpl stDao;
+	private Store st;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		name = request.getParameter("name");
+		if (name == null) name = "";
+		
+		description = request.getParameter("description");
+		if (description == null) description = "";
+		
+		status = request.getParameter("status");
+		if (status == null) status = "";
+		
+		if (status == null)
+			isOpen = false;
+		else if (status.equals("isOpen"))
+			isOpen = true;
+		else if (status.equals("isNotOpen"))
+			isOpen = false;
+				
+		location = request.getParameter("location");
+		if (location == null) location = "";
+		
+		if (!name.equals("") && !description.equals("") && !status.equals("") && !location.equals("")) {
+			stDao = new StoreDaoImpl();
+			st = new  Store();
+			st.setName(name);
+			st.setDescription(description);
+			st.setOpen(isOpen);
+			st.setLocation(location);
+			
+			if (!stDao.storeExists(st)) {
+				stDao.create(st);
+				url = "/bla.jsp";
+			}
+			else {
+				request.setAttribute("error", "store exists");
+
+				request.setAttribute("name", "");
+				request.setAttribute("description", description);
+				request.setAttribute("location", location);
+				url = "/addStore.jsp";
+			}
+				
+		}
+		else {
+			request.setAttribute("error", "null value");
+
+			request.setAttribute("name", name);
+			request.setAttribute("description", description);
+			request.setAttribute("status", status);
+			request.setAttribute("location", location);
+			url = "/addStore.jsp";
+		}
+		
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

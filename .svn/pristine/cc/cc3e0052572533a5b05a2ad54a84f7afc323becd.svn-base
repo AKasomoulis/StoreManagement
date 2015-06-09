@@ -1,0 +1,13 @@
+package gr.uoa.di.storemanagement.datalayer.entities.supplier.dao;
+
+import gr.uoa.di.storemanagement.datalayer.dao.Dao;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.Supplier;
+
+import java.util.List;
+import java.util.UUID;
+
+
+public interface SupplierDao  extends Dao<Supplier, String> {
+	public List<Supplier> findActiveUsers();
+	public Supplier systemUser();
+}

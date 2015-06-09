@@ -1,0 +1,8 @@
+package gr.uoa.di.storemanagement.datalayer.entities.role.dao;
+
+import gr.uoa.di.storemanagement.datalayer.dao.JpaDao;
+import gr.uoa.di.storemanagement.datalayer.entities.role.Role;
+
+public class RoleDaoImpl extends JpaDao<Role, String> implements RoleDao {
+
+}

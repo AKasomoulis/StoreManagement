@@ -1,0 +1,93 @@
+package gr.uoa.di.storemanagement.web.store;
+
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+
+import java.io.IOException;
+import java.util.Enumeration;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+
+public class UpdateStore extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private String url;
+	private String storeName;
+	private String location;
+	private String status;
+	private String description;
+	private StoreDaoImpl storeDao;
+	private Store store;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		storeName = (String) request.getSession().getAttribute("storename");
+		
+		location = (String) request.getParameter("stlocation");
+		if (location == null) location = "";
+		
+		status = (String) request.getParameter("ststatus");
+		if (status == null) status = "";
+		
+		description = (String) request.getParameter("stdescription");
+		if (description == null) description = "";
+		
+		if (!location.equals("") && 
+//				!status.equals("") && 
+				!description.equals("")) {
+			
+			storeDao = new StoreDaoImpl();
+			
+			store = new Store();
+			store = storeDao.read(storeName);
+			
+			store.setName(storeName);
+			store.setLocation(location);
+			store.setDescription(description);
+			if (status.equals("isOpen"))
+				store.setIsOpen(1);
+			else if (status.equals("isNotOpen"))
+				store.setIsOpen(0);
+			
+			storeDao.update(store);
+			url = "/AllStores";	
+			
+		}
+		else {
+			url = "/AllStores";	
+		}
+		
+
+		Enumeration f = request.getParameterNames();
+		Enumeration g = request.getAttributeNames();
+		
+		while (f.hasMoreElements()) {
+			response.getWriter().println("f" + f.nextElement());
+		}
+		
+		while (g.hasMoreElements()) {
+			
+			response.getWriter().println("g" + g.nextElement());
+		}
+		
+		
+//		context = getServletContext();
+//		dispatcher = context.getRequestDispatcher(url);
+//		dispatcher.forward(request, response);
+//		
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

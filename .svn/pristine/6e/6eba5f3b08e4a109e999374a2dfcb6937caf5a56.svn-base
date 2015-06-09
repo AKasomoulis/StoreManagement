@@ -1,0 +1,161 @@
+package gr.uoa.di.storemanagement.datalayer;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.product.dao.ProductDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.role.Role;
+import gr.uoa.di.storemanagement.datalayer.entities.role.dao.RoleDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.Supplier;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.dao.SupplierDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+
+public class Testing {
+
+	public static void main(String[] args) {
+		UserDaoImpl userDao = new UserDaoImpl();
+		ProductDaoImpl prodDao = new ProductDaoImpl();
+		SupplierDaoImpl supDao = new SupplierDaoImpl();
+		StoreDaoImpl storeDao = new StoreDaoImpl();
+		RoleDaoImpl roleDao = new RoleDaoImpl();
+
+		User us = new User();
+		us.setEmail("pao@in.gr");
+		us.setFirstName("Karolos");
+		us.setLastName("Peperigkos");
+		us.setUsername("tiktak");
+		us.setPassword("7777776");
+		
+		if (userDao.userExists(us)) {
+			userDao.update(us);
+		} 
+		else {
+			userDao.create(us);
+		}
+		
+		Product pa = new Product();
+		pa.setDescription("gala");
+		pa.setName("delta");
+		pa.setSerialNumber(4602767);
+
+		Product pa1 = new Product();
+		pa1.setDescription("gala");
+		pa1.setName("fage");
+		pa1.setSerialNumber(353251);
+
+		Product pa11 = new Product();
+		pa11.setDescription("gala");
+		pa11.setName("olympos");
+		pa11.setSerialNumber(580989);
+
+		Product paa = new Product();
+		paa.setDescription("gala");
+		paa.setName("moraki");
+		paa.setSerialNumber(819432);
+		
+		Store st = new Store();
+		st.setDescription("d");
+		st.setLocation("lo");
+		st.setName("carrefour");
+		st.setOpen(true);
+
+		Store st1 = new Store();
+		st1.setDescription("d");
+		st1.setLocation("lo");
+		st1.setName("panathinaikos");
+		st1.setOpen(true);
+
+		Store st11 = new Store();
+		st11.setDescription("d");
+		st11.setLocation("lo");
+		st11.setName("vouli");
+		st11.setOpen(true);
+
+		Store st2 = new Store();
+		st2.setDescription("d");
+		st2.setLocation("lo");
+		st2.setName("alfa romeo");
+		st2.setOpen(true);
+		
+		Supplier sup = new Supplier();
+		sup.setAddress("sto diaolo");
+		sup.setCompanyName("Coca Cola");
+		sup.setDescription("perigrafi swtirakopoulos");
+		
+		
+		prodDao.create(paa);
+		prodDao.create(pa1);
+		prodDao.create(pa11);
+		
+		supDao.create(sup);
+		
+		sup.addProduct(paa, 10);
+		sup.addProduct(pa11, 10);
+		sup.removeProduct(paa);
+		supDao.update(sup);
+		
+		if (storeDao.storeExists(st2)) {
+			storeDao.update(st2);
+		}
+		else {
+			storeDao.create(st2);
+		}
+
+		st2.addProduct(paa, 2, "stringaki");
+		st2.addProduct(pa1, 6, "tangaki");
+		st2.removeProduct(paa);
+		
+		prodDao.delete(paa);
+//		prodDao.delete(pa1);
+		
+		storeDao.update(st2);
+//		prodDao.delete(paa);
+		
+//		storeDao.delete(st2);
+		
+		
+		
+		Role role = new Role();
+		role.setRights(222);
+		role.setRoleName("mageiras");
+		roleDao.create(role);
+	
+		us.setRole(role);
+		userDao.update(us);
+
+
+		if (storeDao.storeExists(st)) {
+			storeDao.update(st);
+		}
+		else {
+			storeDao.create(st);
+		}
+		
+		if (storeDao.storeExists(st1)) {
+			storeDao.update(st1);
+		}
+		else {
+			storeDao.create(st1);
+		}
+		
+		if (storeDao.storeExists(st11)) {
+			storeDao.update(st11);
+		}
+		else {
+			storeDao.create(st11);
+		}
+		
+		if (prodDao.ifProductExists(pa)) {
+			prodDao.update(pa);
+		}
+		else {
+			prodDao.create(pa);
+		}
+//		prodDao.create(pa1);
+//		prodDao.create(pa11);
+//		prodDao.create(paa);
+
+	}
+
+}

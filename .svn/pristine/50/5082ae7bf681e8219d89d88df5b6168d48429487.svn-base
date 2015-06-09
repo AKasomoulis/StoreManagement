@@ -1,0 +1,189 @@
+package gr.uoa.di.storemanagement.web.product;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.product.ProductPK;
+import gr.uoa.di.storemanagement.datalayer.entities.product.dao.ProductDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.productstore.ProductStore;
+import gr.uoa.di.storemanagement.datalayer.entities.productstore.ProductStorePK;
+import gr.uoa.di.storemanagement.datalayer.entities.productstore.dao.ProductStoreDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+import gr.uoa.di.storemanagement.datalayer.entities.store.dao.StoreDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.dao.SupplierDaoImpl;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class UpdateProduct extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+	private ProductPK productPK;
+	
+	private ProductDaoImpl productDao;
+	private Product product;
+
+	private Store oldStore;
+	private Store newStore;
+	private StoreDaoImpl storeDao;
+	private SupplierDaoImpl supplierDao;
+	
+	private ProductStoreDaoImpl psDao;
+	private List<ProductStore> productStore;
+	
+	private ProductStore old;
+	private ProductStore toBeRemoved;
+	private ProductStore toBeAdded;
+	private ProductStore toGetUpdated;
+	private ProductStorePK pk;
+	
+	private String productName;
+	private String serialNumber;
+	private String description;
+	private int dimensions;
+	private int mass;
+	private String type;
+	private int weight;
+	
+	private String newStoreName;
+	private int newQuantity;
+	
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+	private String url;
+       
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		storeDao = new StoreDaoImpl();
+		productDao = new ProductDaoImpl();
+		
+		productName = request.getParameter("prname");
+		if (productName == null) productName = "";
+
+		serialNumber = request.getParameter("prserialnumber");
+		if (serialNumber == null) serialNumber = "";
+		
+		description = request.getParameter("prdescription");
+		if (description == null) description = "";
+		
+		if (request.getParameter("prdimension") != "") {
+			dimensions = Integer.parseInt(request.getParameter("prdimension"));
+		}
+		else {
+			dimensions = -1;
+		}
+		
+		if (request.getParameter("prmass") != "") {
+			mass = Integer.parseInt(request.getParameter("prmass"));
+		}
+		else {
+			mass = -1;
+		}
+		
+		if (request.getParameter("prweight") != "") {
+			weight = Integer.parseInt(request.getParameter("prweight"));
+		}
+		else {
+			weight = -1;
+		}
+		
+		type = request.getParameter("prtype");
+		if (type == null) type = "";
+		
+		productPK = new ProductPK();
+		productPK.setName(productName);
+		productPK.setSerialNumber(serialNumber);
+		
+		product = new Product();
+		product = productDao.read(productPK);
+		
+		if (product == null) {
+			url = "/ErrorPage.jsp";	
+		}
+		else {
+			psDao = new ProductStoreDaoImpl();
+			productStore = psDao.getEverythingFromProduct(productPK);
+			
+			Iterator itr = productStore.iterator();
+			
+			
+			while (itr.hasNext()) {
+				
+				old = (ProductStore) itr.next();
+				if (request.getParameter("checkbox" + old.getStoreName()) != null) {
+					
+					newStoreName = request.getParameter("selectNewStore" + old.getStoreName());
+					newQuantity = Integer.valueOf(request.getParameter("newQuantity" + old.getStoreName()));
+					
+					oldStore = storeDao.read(old.getStoreName());
+					newStore = storeDao.read(newStoreName);
+					
+					if (newQuantity == 0) {
+//						//do nothing
+					}
+					else if (newQuantity == old.getQuantity()) {
+						toBeRemoved = new ProductStore();
+						toBeRemoved.setProductName(old.getProductName());
+						toBeRemoved.setSerialNumber(old.getSerialNumber());
+						toBeRemoved.setStoreName(old.getStoreName());
+						psDao.delete(toBeRemoved);
+
+						toBeAdded = new ProductStore();
+						toBeAdded.setProductName(productName);
+						toBeAdded.setSerialNumber(serialNumber);
+						toBeAdded.setStoreName(newStoreName);
+						toBeAdded.setQuantity(newQuantity);
+						toBeAdded.setLt("neo re poustrako..");
+						psDao.create(toBeAdded);
+					}
+					else if (newQuantity < old.getQuantity()) {
+						toGetUpdated = new ProductStore();
+
+						pk = new ProductStorePK();
+						pk.setProductName(old.getProductName());
+						pk.setSerialNumber(old.getSerialNumber());
+						pk.setStoreName(old.getStoreName());
+
+						toGetUpdated = psDao.read(pk);
+						toGetUpdated.setQuantity(old.getQuantity() - newQuantity);
+						psDao.update(toGetUpdated);
+						
+						//to be added or updated?
+						toBeAdded = new ProductStore();
+						toBeAdded.setProductName(productName);
+						toBeAdded.setSerialNumber(serialNumber);
+						toBeAdded.setStoreName(newStoreName);
+						toBeAdded.setQuantity(newQuantity);
+						toBeAdded.setLt("neo re poustrako..");
+						psDao.create(toBeAdded);
+					}
+				}
+			}
+			
+			product.setDescription(description);
+			product.setDimensions(dimensions);
+			product.setMass(mass);
+			product.setWeight(weight);
+			product.setType(type);
+			productDao.update(product);
+			
+			url = "/AllProducts";
+		}
+		
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+		
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

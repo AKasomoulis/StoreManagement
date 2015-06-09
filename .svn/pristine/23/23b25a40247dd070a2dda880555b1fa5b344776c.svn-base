@@ -1,0 +1,102 @@
+package gr.uoa.di.storemanagement.datalayer.entities.user.dao;
+
+import gr.uoa.di.storemanagement.datalayer.DataLayer;
+import gr.uoa.di.storemanagement.datalayer.dao.JpaDao;
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+
+public class UserDaoImpl extends JpaDao<User, String> implements UserDao {
+
+	Logger log = LoggerFactory.getLogger(UserDaoImpl.class);
+
+	public List<User> findActiveUsers() {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<User> result = null;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			result = entityManager.createQuery(
+					"from User us where us.isActive = 1", User.class)
+					.getResultList();
+
+			tx.commit();
+
+			log.debug("Find active users ");
+			log.debug(result.size() + " results");
+			for (User us : (List<User>) result) {
+				log.debug("User (" + us.getFirstName() + ")");
+			}
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return result;
+	}
+
+	public User systemUser() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean ifUserExists(User us) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<User> result = null;
+		String queryString;
+		Query query;
+	
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+
+			
+			queryString = "FROM User us " +
+                    "WHERE us.username = :username";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("username", us.getUsername());
+
+			result = query.getResultList();
+			
+			tx.commit();
+
+			log.info("dsfadsafsdaf");
+			log.debug("User with name: " + us.getUsername() + " exists: ");
+			if (result.isEmpty()) {
+				log.debug("false");
+			} else {
+				log.debug("true");
+			}
+
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return !result.isEmpty();
+	}
+
+}

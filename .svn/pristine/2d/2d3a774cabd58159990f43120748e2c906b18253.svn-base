@@ -1,0 +1,58 @@
+package gr.uoa.di.storemanagement.datalayer.entities.supplier.dao;
+
+import gr.uoa.di.storemanagement.datalayer.DataLayer;
+import gr.uoa.di.storemanagement.datalayer.dao.JpaDao;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.Supplier;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+
+public class SupplierDaoImpl extends JpaDao<Supplier, String> implements SupplierDao {
+
+	Logger log = LoggerFactory.getLogger(SupplierDaoImpl.class);
+	
+	public List<Supplier> findActiveUsers() {
+		EntityManager entityManager = DataLayer.getEntityManager();
+		
+		EntityTransaction tx = null;
+		List<Supplier> result = null;
+		
+		try
+		{
+			tx = entityManager.getTransaction();
+			tx.begin();
+			
+			result = entityManager.createQuery("from User us where us.isActive = 1", Supplier.class).getResultList();
+	
+			tx.commit();
+			
+			log.debug("Find active users ");
+			log.debug(result.size() + " results");
+			for (Supplier sup : (List<Supplier>) result) {
+				log.debug("User (" + sup.getCompanyName() + ")");
+			}
+		}catch(RuntimeException e)
+		{
+			if(tx != null && tx.isActive()) tx.rollback();
+			throw e;
+		}finally
+		{
+			entityManager.close();
+		}
+	
+		return result;
+	}
+
+	public Supplier systemUser() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+}

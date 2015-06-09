@@ -1,0 +1,187 @@
+package gr.uoa.di.storemanagement.web;
+
+import gr.uoa.di.storemanagement.datalayer.entities.role.Role;
+import gr.uoa.di.storemanagement.datalayer.entities.role.dao.RoleDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.supplier.dao.SupplierDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.UserForApproval;
+import gr.uoa.di.storemanagement.datalayer.entities.user.UserSupplier;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserForApprovalDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.userSupplierDao.UserSupplierDaoImpl;
+
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class Signup extends HttpServlet {
+
+	private static final long serialVersionUID = 1L;
+	private UserForApproval user;
+	private UserSupplier userSupplier;
+	private UserSupplierDaoImpl userSupplierDao;
+	private String url;
+	private String username;
+	private String password;
+	private String rpassword;
+	private String firstname;
+	private String lastname;
+	private String roleName;
+	private String supplierCode;
+	private String email;
+	private String supplierName;
+	private Pattern p;
+	private Matcher m;
+	private boolean matchFound;
+	private UserDaoImpl userDao;
+	private UserForApprovalDaoImpl userForApprovalDao;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+	private RoleDaoImpl roleDao;
+	private Role role;
+	private SupplierDaoImpl supDao;
+
+	protected void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+
+		/* Get user's information*/
+		username = request.getParameter("username");
+		if (username == null) username = "";
+
+		password = request.getParameter("password");
+		if (password == null) password = "";
+
+		rpassword = request.getParameter("rpassword");
+		if (rpassword == null) rpassword = "";
+
+		firstname = request.getParameter("firstname");
+		if (firstname == null) firstname = "";
+
+		lastname = request.getParameter("lastname");
+		if (lastname == null) lastname = "";
+
+		email = request.getParameter("email");
+		if (email == null) email = "";
+		
+		roleName = request.getParameter("role");
+		if (roleName == null) roleName = "";
+		
+		if (roleName.equals("Supplier representative")) {
+			supplierCode = request.getParameter("suppPass");
+			if (supplierCode == null) {
+				roleName = "";
+			}
+			else {
+				supDao = new SupplierDaoImpl();
+				supplierName = supDao.checkoutCode(supplierCode);
+				if (supplierName == null) supplierName = "";
+				else {
+					userSupplier = new UserSupplier();
+					userSupplierDao = new UserSupplierDaoImpl();
+					userSupplier.setSupplierName(supplierName);
+					userSupplier.setUsername(username);
+					userSupplierDao.create(userSupplier);
+				}
+			}
+		}
+		else
+			supplierName = "asd";
+			
+
+		/* If there is no null information*/
+		if (!username.equals("") && !password.equals("") && !firstname.equals("") && !lastname.equals("") && !email.equals("") && !roleName.equals("") && !supplierName.equals("")) {
+
+			/* If retyped password is equals to password*/
+			if (password.equals(rpassword)) {
+
+				p = Pattern.compile(".+@.+\\.[a-z]+");
+				m = p.matcher(email);
+				matchFound = m.matches();
+					
+				/* If e-mail is invalid*/
+				if (!matchFound) {
+					request.setAttribute("error", "invalid email address");
+
+					request.setAttribute("username", username);
+					request.setAttribute("firstname", firstname);
+					request.setAttribute("lastname", lastname);
+					request.setAttribute("email", "");
+					request.setAttribute("role", roleName);
+					url = "/signup.jsp";
+				}
+				else {
+					/* Else if e-mail is valid*/
+					userDao = new UserDaoImpl();
+					userForApprovalDao = new UserForApprovalDaoImpl();
+					user = new UserForApproval();
+					roleDao = new RoleDaoImpl();
+					
+					role = roleDao.read(roleName);
+					user.setUsername(username);
+					user.setPassword(password);
+					user.setFirstName(firstname);
+					user.setLastName(lastname);
+					user.setEmail(email);
+					user.setRole(role);
+
+					/* If user doesn't exist in database*/
+					if (!userForApprovalDao.userExists(user.getUsername()) && !userDao.userExists(user.getUsername())) {
+						
+						/* Insert it in database - UserForApproval table*/
+						userForApprovalDao.create(user);
+						url = "/thankyou.html";
+					} 
+					else {
+						/* Error message in jsp - user exists*/
+						request.setAttribute("error", "username exists");
+
+						request.setAttribute("username", "");
+						request.setAttribute("firstname", firstname);
+						request.setAttribute("lastname", lastname);
+						request.setAttribute("email", email);
+						request.setAttribute("role", roleName);
+						url = "/signup.jsp";
+					}
+				}	
+			} 
+			else {
+				/* Error message in jsp - password mismatch*/
+				request.setAttribute("error","trying to signup with different passwords");
+
+				request.setAttribute("username", username);
+				request.setAttribute("firstname", firstname);
+				request.setAttribute("lastname", lastname);
+				request.setAttribute("email", email);
+				request.setAttribute("role", roleName);
+				url = "/signup.jsp";
+			}
+		} 
+		else {
+			/* Error message in jsp - empty field*/
+			request.setAttribute("error", "null value");
+
+			request.setAttribute("username", username);
+			request.setAttribute("password", password);
+			request.setAttribute("firstname", firstname);
+			request.setAttribute("lastname", lastname);
+			request.setAttribute("email", email);
+			request.setAttribute("role", roleName);
+			url = "/signup.jsp";
+		}
+
+		/* Redirection to jsp or servlet*/
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

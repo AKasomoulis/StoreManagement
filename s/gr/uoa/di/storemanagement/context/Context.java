@@ -1,0 +1,89 @@
+package gr.uoa.di.storemanagement.context;
+
+import gr.uoa.di.storemanagement.datalayer.entities.role.Role;
+import gr.uoa.di.storemanagement.datalayer.entities.role.dao.RoleDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+
+public class Context {
+	// price 
+	private static double fee = 29;
+	private static double discount = 10;
+	private static double otherFee = 1;
+	
+	private static String adminRoleName = "Admin";
+	private static String adminFirstName = "Karolos";
+	private static String adminLastName = "Tritou";
+	private static String adminUsername = "admin";
+	private static String adminPassword = "admin";
+	private static String adminEmail = "admin@storemanagement.gr";
+	private static int adminRoleRights = 222;
+	
+	public static void createAdmin() {
+		UserDaoImpl userDao = new UserDaoImpl();
+		RoleDaoImpl roleDao = new RoleDaoImpl();
+		User admin = new User();
+		Role role = new Role();
+		role = null;
+		
+		role = roleDao.read(adminRoleName);
+		
+		if (role == null) {
+			createAdminRole();
+			createStandardRoles();
+		}
+		
+		role = roleDao.read(adminRoleName);
+
+		admin.setEmail(adminEmail);
+		admin.setFirstName(adminFirstName);
+		admin.setLastName(adminLastName);
+		admin.setPassword(adminPassword);
+		admin.setUsername(adminUsername);
+		admin.setRole(role);
+		
+		if (!userDao.userExists(adminUsername)) userDao.create(admin);
+	}
+	
+	public static void createAdminRole() {
+		RoleDaoImpl roleDao = new RoleDaoImpl();
+		Role role = new Role();
+		
+		role.setRoleName(adminRoleName);
+		role.setRights(adminRoleRights);
+		
+		roleDao.create(role);
+	}
+	
+	public static void createStandardRoles() {
+		RoleDaoImpl roleDao = new RoleDaoImpl();
+		Role role2 = new Role();
+		Role role3 = new Role();
+		Role role4 = new Role();
+		
+		role2.setRoleName("Storekeeper");
+		role2.setRights(201);
+		role3.setRoleName("Customer");
+		role3.setRights(101);
+		role4.setRoleName("Supplier representative");
+		role4.setRights(102);
+		
+		roleDao.create(role2);
+		roleDao.create(role3);
+		roleDao.create(role4);
+	}
+	
+	public static String getAdminRoleName() {
+		return adminRoleName;
+	}
+	
+	public static double getFee() {
+		return fee;
+	}
+	public static double getOtherFee() {
+		return otherFee;
+	}
+	public static double getDiscount() {
+		return discount;
+	}
+}

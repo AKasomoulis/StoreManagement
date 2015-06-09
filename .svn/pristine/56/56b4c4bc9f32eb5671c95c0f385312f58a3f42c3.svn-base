@@ -1,0 +1,8 @@
+package gr.uoa.di.storemanagement.datalayer.entities.lastmovements.dao;
+
+import gr.uoa.di.storemanagement.datalayer.dao.JpaDao;
+import gr.uoa.di.storemanagement.datalayer.entities.product.LastMovements;
+
+public class LastMovementsDaoImpl extends JpaDao<LastMovements, Integer> implements LastMovementsDao {
+
+}

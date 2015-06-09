@@ -1,0 +1,13 @@
+package gr.uoa.di.storemanagement.datalayer.entities.product.dao;
+
+import gr.uoa.di.storemanagement.datalayer.dao.Dao;
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.product.ProductPK;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+
+import java.util.List;
+
+public interface ProductDao  extends Dao<Product, ProductPK> {
+	public List<User> findActiveUsers();
+	public User systemUser();
+}

@@ -1,0 +1,66 @@
+package gr.uoa.di.storemanagement.web.user;
+
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.UserSupplier;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.userSupplierDao.UserSupplierDaoImpl;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class DeleteUser extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private UserSupplier userSupplier;
+	private UserSupplierDaoImpl userSupplierDao;
+	private UserDaoImpl userDao;
+	private User user;
+	private String username;
+	
+	private String url;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		userDao = new UserDaoImpl();
+		userSupplierDao = new UserSupplierDaoImpl();
+		
+		user = new User();
+		userSupplier = new UserSupplier();
+		
+		/* Get user's username*/
+		username = (String)request.getSession().getAttribute("username");
+		
+		/* If user is supplier's representative delete it*/
+		if (userSupplierDao.UserSuppExists(username)) {
+			userSupplier = userSupplierDao.read(username);
+			userSupplierDao.delete(userSupplier);
+		}		
+		
+		/* Read user from database*/
+		user = userDao.read(username);
+		
+		/* Delete it*/
+		userDao.delete(user);
+		
+		/* Redirection to jsp*/
+		url = "/AllUsers";
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);	
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

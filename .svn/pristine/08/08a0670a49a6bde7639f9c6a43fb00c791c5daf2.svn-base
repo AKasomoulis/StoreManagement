@@ -1,0 +1,81 @@
+package gr.uoa.di.storemanagement.datalayer.entities.supplierproductlink.dao;
+
+import gr.uoa.di.storemanagement.datalayer.DataLayer;
+import gr.uoa.di.storemanagement.datalayer.dao.JpaDao;
+import gr.uoa.di.storemanagement.datalayer.entities.product.ProductPK;
+import gr.uoa.di.storemanagement.datalayer.entities.storeproductlink.StoreProductLink;
+import gr.uoa.di.storemanagement.datalayer.entities.storeproductlink.StoreProductLinkPK;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+
+public class SupplierProductLinkDaoImpl extends JpaDao<StoreProductLink, StoreProductLinkPK> implements SupplierProductLinkDao{
+
+	public List<Object[]> getProductsFromSupplier(String suppName) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Object[]> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+			
+			queryString = "SELECT supprl.productName, supprl.productSerialNumber FROM SupplierProductLink supprl WHERE supprl.supplierName = :name";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("name", suppName);
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return result;	
+	}
+
+	public List<Object[]> getSuppliersWithProduct(ProductPK productPK) {
+		EntityManager entityManager = DataLayer.getEntityManager();
+
+		EntityTransaction tx = null;
+		List<Object[]> result = null;
+		String queryString;
+		Query query;
+
+		try {
+			tx = entityManager.getTransaction();
+			tx.begin();
+			
+			queryString = "SELECT s.supplierName FROM SupplierProductLink s WHERE s.productName = :name AND s.productSerialNumber = :serialNumber";
+			query = entityManager.createQuery(queryString);
+
+			query.setParameter("name", productPK.getName());
+			query.setParameter("serialNumber", productPK.getSerialNumber());
+
+			result = query.getResultList();
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null && tx.isActive())
+				tx.rollback();
+			throw e;
+		} finally {
+			entityManager.close();
+		}
+
+		return result;	
+	}
+
+}
+

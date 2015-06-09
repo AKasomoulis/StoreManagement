@@ -1,0 +1,62 @@
+package gr.uoa.di.storemanagement.datalayer;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.product.dao.ProductDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+
+public class Testing {
+
+	public static void main(String[] args) {
+		UserDaoImpl userDao = new UserDaoImpl();
+		ProductDaoImpl prodDao = new ProductDaoImpl();
+		
+		User us = new User();
+		us.setEmail("pao@in.gr");
+		us.setFirstName("Karolos");
+		us.setLastName("Peperigkos");
+		us.setUsername("myname");
+		us.setPassword("7777776");
+		
+		if (userDao.UserExists(us)) {
+			userDao.update(us);
+		} 
+		else {
+			userDao.create(us);
+		}
+		
+		
+		Product pa = new Product();
+		pa.setDescription("gala");
+		pa.setName("delta");
+		pa.setSerialNumber(4602767);
+
+		Product pa1 = new Product();
+		pa1.setDescription("gala");
+		pa1.setName("fage");
+		pa1.setSerialNumber(353251);
+
+		Product pa11 = new Product();
+		pa11.setDescription("gala");
+		pa11.setName("olympos");
+		pa11.setSerialNumber(580989);
+
+		Product paa = new Product();
+		paa.setDescription("gala");
+		paa.setName("moraki");
+		paa.setSerialNumber(819432);
+		
+		
+		if (prodDao.ifProductExists(pa)) {
+			prodDao.update(pa);
+		}
+		else {
+			prodDao.create(pa);
+		}
+//		prodDao.create(pa1);
+//		prodDao.create(pa11);
+//		prodDao.create(paa);
+
+	}
+
+}

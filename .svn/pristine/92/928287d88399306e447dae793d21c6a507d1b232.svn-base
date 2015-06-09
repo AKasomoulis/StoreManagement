@@ -1,0 +1,224 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@page import="gr.uoa.di.storemanagement.datalayer.entities.user.User"%>
+<%@page import="gr.uoa.di.storemanagement.datalayer.entities.role.dao.RoleDaoImpl"%>
+<%@page import="java.lang.String"%>
+<%@page import="java.util.List"%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width">
+<meta name="description"
+	content="Designa Studio, a HTML5 / CSS3 template.">
+<meta name="author"
+	content="Sylvain Lafitte, Web Designer, sylvainlafitte.com">
+<title>Registration // e-Warehouse</title>
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<link rel="shortcut icon" type="image/png" href="favicon.png">
+<link
+	href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700'
+	rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="css/style.css">
+
+
+</head>
+
+<body>
+
+	<div class="container">
+
+		<header id="navtop"> <a href="index.html" class="logo fleft">
+			<img src="img/logo2.png" alt="Designa Studio">
+		</a> <nav class="fright">
+		<ul>
+			<li><a href="index.html" class="navactive">Home</a></li>
+			<li><a href="about.html">Our Company</a></li>
+		</ul>
+		<ul>
+			<li><a href="services.html">Services</a></li>
+			<li><a href="works.html">Works</a></li>
+		</ul>
+		<ul>
+			<li><a href="contact.html">Contact</a></li>
+			<li><a href="register.html">Register</a></li>
+		</ul>
+		</nav> </header>
+
+		<div id="signup-form">
+
+			<div id="signup-inner">
+
+				<div class="clearfix" id="header">
+
+					<img id="signup-icon" src="./images/signup.png" alt="" />
+
+					<h1>Sign up free</h1>
+
+
+				</div>
+				<p>Please complete the fields below, ensuring you use a valid
+					email address as you will be sent a validation code which you will
+					need the first time you login to the site.</p>
+
+
+				<div class="clear padding20"></div>
+				<%
+					String results, username, firstname, lastname, email, role;
+					results = null;
+					username = firstname = lastname = email = role = "";
+				%>
+
+				<%
+					results = (String) request.getAttribute("error");
+					if (results != null) {
+						if (results == "null value")
+							out.print("<font color='red'><div class='error_box none' style='display: block;width:200px; '> There is/are empty field/fields </div></font>");
+
+						username = (String) request.getAttribute("username");
+						firstname = (String) request.getAttribute("firstname");
+						lastname = (String) request.getAttribute("lastname");
+						email = (String) request.getAttribute("email");
+					}
+				%>
+
+				<form action="Signup" method="post">
+
+					<p>
+						<%
+							out.print("<label for='username'>Username *</label> <input id='username'type='text' name='username' value='"
+									+ username + "' />");
+						%>
+
+					</p>
+
+					<%
+						if (results == "username exists") {
+							out.print("<font color='red'><div class='error_box none' style='display: block;width:300px; '> This username already exists</div></font>");
+						}
+					%>
+
+					<p>
+						<label for="password">Password *</label> <input id="password"
+							type="text" name="password" value="" />
+					</p>
+
+					<%
+						if (results == "trying to signup with different passwords") {
+							out.print("<font color='red'><div class='error_box none' style='display: block;width:300px; '> These passwords don't match </div></font>");
+						}
+					%>
+
+					<p>
+						<label for="rpassword">Retype Password *</label> <input
+							id="rpassword" type="text" name="rpassword" value="" />
+					</p>
+
+					<p>
+						<%
+							out.print("<label for='firstname'>First name *</label> <input id='firstname'type='text' name='firstname' value='"
+									+ firstname + "' />");
+						%>
+					</p>
+
+					<p>
+						<%
+							out.print("<label for='lastname'>Last name *</label> <input id='lastname'type='text' name='lastname' value='"
+									+ lastname + "' />");
+						%>
+					</p>
+
+					<p>
+						<%
+							out.print("<label for='email'>E-mail *</label> <input id='email'type='text' name='email' value='"
+									+ email + "' />");
+						%>
+					</p>
+
+					<p>
+						<%
+							if (results == "invalid email address") {
+								out.print("<font color='red'><div class='error_box none' style='display: block;width:300px; '> Invalid E-mail address</div></font>");
+							}
+						%>
+
+					</p>
+
+				<label for="role">Role *</label>
+
+						<%
+						
+						List<String> roles = null;
+						RoleDaoImpl roleDao = new RoleDaoImpl();
+
+						roles = roleDao.getAllRoles();
+						
+						if (roles != null) {
+							for (int i = 0; i != roles.size(); ++i) {
+								out.print("<input type='radio' name='role' value='");
+								out.print(roles.get(i));
+								out.print("'>");
+								out.print(roles.get(i));
+								out.print("<br>");
+							}
+						}
+								out.print("<input type='radio' name='role' value='customer'>Customer<br><br>");
+						%>
+					</p>
+
+					<p>
+						<button id="submit" type="submit">Submit</button>
+					</p>
+
+
+				</form>
+
+
+				<div id="required">
+					<p>
+						* Required Fields<br /> NOTE: You must activate your account
+						after sign up!
+					</p>
+				</div>
+
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+	<div class="divide-top">
+		<footer class="grid-wrap">
+		<ul class="grid col-one-third social">
+
+			<li><a href="https://www.facebook.com">Facebook</a></li>
+			<li><a href="https://www.twitter.com">Twitter</a></li>
+			<li><a href="https://plus.google.com">Google+</a></li>
+			<li><a href="https://www.flickr.com">Flickr</a></li>
+		</ul>
+
+		<div class="up grid col-one-third ">
+			<a href="#navtop" title="Go back up">&uarr;</a>
+		</div>
+
+		<nav class="grid col-one-third ">
+		<ul>
+			<li><a href="index.html">Home</a></li>
+			<li><a href="about.html">Our Company</a></li>
+			<li><a href="services.html">Services</a></li>
+			<li><a href="works.html">Works</a></li>
+			<li><a href="contact.html">Contact</a></li>
+			<li><a href="register.html">Register</a></li>
+
+		</ul>
+		</nav> </footer>
+	</div>
+
+
+</body>
+
+</html>

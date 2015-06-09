@@ -1,0 +1,74 @@
+package gr.uoa.di.storemanagement.datalayer.entities.productstore;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+
+@Entity
+@IdClass(ProductStorePK.class)
+@Table(name = "ProductStore")
+public class ProductStore {
+	@Id
+	@Column(name = "PS_PName", nullable = false, length = 45)
+	private String productName;
+
+	@Id
+	@Column(name = "PS_PSerialNumber", nullable = false, length = 45)
+	private String serialNumber;
+
+	@Id
+	@Column(name = "PS_SName", nullable = false, length = 100)
+	private String storeName;
+	
+	@Column(name = "PR_Quantity")
+	private int quantity;
+
+	@Column(name = "PR_Lt")
+	private String lt;
+	
+	public ProductStore() {
+		
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+
+	public String getStoreName() {
+		return storeName;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public String getLt() {
+		return lt;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public void setSerialNumber(String serialNumber) {
+		this.serialNumber = serialNumber;
+	}
+
+	public void setStoreName(String storeName) {
+		this.storeName = storeName;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	public void setLt(String lt) {
+		this.lt = lt;
+	}
+}

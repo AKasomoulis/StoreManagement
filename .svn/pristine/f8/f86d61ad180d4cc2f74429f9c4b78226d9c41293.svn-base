@@ -1,0 +1,93 @@
+package gr.uoa.di.storemanagement.datalayer.entities.product;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
+
+
+@Entity
+@IdClass(ProductPK.class)
+@Table(name = "product")
+public class Product {
+	@Id
+	@JoinColumn(name = "PR_Name", nullable = false)
+	private String name;
+	
+	@Id
+	@JoinColumn(name = "PR_Serialmumber", nullable = false)
+	private int serial_number;
+
+	@Column(name = "PR_Description", nullable = false, length = 100)	
+	private String description;
+	
+	@Column(name = "PR_Type", nullable = true, length = 15)
+	private String type;
+	@Column(name = "PR_Weight", nullable = true)
+	private int weight;
+	@Column(name = "PR_Dimensions", nullable = true)
+	private int dimensions;
+	@Column(name = "PR_Mass", nullable = true)
+	private int mass;
+	
+	public Product() {
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public int getSerial_number() {
+		return serial_number;
+	}
+
+	public void setSerial_number(int serial_number) {
+		this.serial_number = serial_number;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
+	public int getDimensions() {
+		return dimensions;
+	}
+
+	public void setDimensions(int dimensions) {
+		this.dimensions = dimensions;
+	}
+
+	public int getMass() {
+		return mass;
+	}
+
+	public void setMass(int mass) {
+		this.mass = mass;
+	}	
+}

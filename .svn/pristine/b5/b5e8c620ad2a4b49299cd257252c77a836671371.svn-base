@@ -1,0 +1,66 @@
+package gr.uoa.di.storemanagement.web;
+
+import gr.uoa.di.storemanagement.datalayer.entities.user.User;
+import gr.uoa.di.storemanagement.datalayer.entities.user.UserForApproval;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserDaoImpl;
+import gr.uoa.di.storemanagement.datalayer.entities.user.dao.UserForApprovalDaoImpl;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.List;
+
+
+public class AllUsers extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	private UserForApprovalDaoImpl usAppDao;
+	private UserDaoImpl userDao;
+	private List<String> approvedUsers;
+	private List<String> notApprovedUsers;
+	private int numOfApprovedUsers;
+	private int numOfNotApprovedUsers;
+	private ServletContext context;
+	private RequestDispatcher dispatcher;
+	private String url;
+	private PrintWriter pw;
+       
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		usAppDao = new UserForApprovalDaoImpl();
+		userDao = new UserDaoImpl();
+		
+		pw = response.getWriter();
+		
+		approvedUsers = userDao.getAllUsers();
+		numOfApprovedUsers = approvedUsers.size();
+		request.setAttribute("approvedUsers", approvedUsers);
+		request.setAttribute("numOfApprovedUsers", String.valueOf(numOfApprovedUsers));
+		
+		notApprovedUsers = usAppDao.getAllUsers();
+		numOfNotApprovedUsers = notApprovedUsers.size();
+		request.setAttribute("notApprovedUsers", notApprovedUsers);
+		request.setAttribute("numOfNotApprovedUsers", String.valueOf(numOfNotApprovedUsers));
+		
+		
+		url = "/adminHomeUsers.jsp";
+		context = getServletContext();
+		dispatcher = context.getRequestDispatcher(url);
+		dispatcher.forward(request, response);
+
+	}
+
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

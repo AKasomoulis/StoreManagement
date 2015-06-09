@@ -1,0 +1,8 @@
+package gr.uoa.di.storemanagement.datalayer.entities.role.dao;
+
+import gr.uoa.di.storemanagement.datalayer.dao.Dao;
+import gr.uoa.di.storemanagement.datalayer.entities.role.Role;
+
+
+public interface RoleDao extends Dao<Role, String> {
+}

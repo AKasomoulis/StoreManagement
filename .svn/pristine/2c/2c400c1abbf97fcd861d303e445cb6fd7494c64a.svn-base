@@ -1,0 +1,37 @@
+package gr.uoa.di.storemanagement.datalayer.entities.storeproductlink;
+
+import gr.uoa.di.storemanagement.datalayer.entities.product.Product;
+import gr.uoa.di.storemanagement.datalayer.entities.store.Store;
+
+import java.io.Serializable;
+
+public class StoreProductLinkPK implements Serializable
+{
+	private static final long serialVersionUID = 7248177294975403198L;
+	
+	private String storeName = null;
+	private String productName = null;
+	private int productSerialNumber = 0;
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		if (this == other)
+	        return true;
+	    if (!(other instanceof StoreProductLinkPK))
+	        return false;
+	    StoreProductLinkPK castOther = (StoreProductLinkPK) other;
+	    return storeName.equals(castOther.storeName) && 
+	    		productName.equals(castOther.productName) && 
+	    			productSerialNumber == castOther.productSerialNumber;
+	}
+	
+	@Override
+	public int hashCode() 
+	{
+	    final int prime = 31;
+	    int hash = 17;
+	    hash = hash * prime + productSerialNumber;
+	    return hash;
+	}
+}

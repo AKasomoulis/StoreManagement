@@ -1,0 +1,299 @@
+<%@page import="java.util.ArrayList"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="gr.uoa.di.storemanagement.datalayer.entities.store.Store"%>
+<%@page import="java.lang.String"%>
+<%@page import="java.util.List"%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width">
+<meta name="description" content="Designa Studio, a HTML5 / CSS3 template.">
+<meta name="author" content="Sylvain Lafitte, Web Designer, sylvainlafitte.com">
+<title>Registration // e-Warehouse</title>
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<link rel="shortcut icon" type="image/png" href="favicon.png">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+	<div class="container">
+
+		<header id="navtop"> <a href="index.jsp" class="logo fleft">
+			<img src="img/logo2.png" alt="Designa Studio">
+		</a> <nav class="fright">
+		<ul>
+			<li><a href="index.html" class="navactive">Home</a></li>
+			<li><a href="about.html">Our Company</a></li>
+		</ul>
+		<ul>
+			<li><a href="services.html">Services</a></li>
+			<li><a href="works.html">Works</a></li>
+		</ul>
+		<ul>
+			<li><a href="contact.html">Contact</a></li>
+			<li><a href="register.html">Register</a></li>
+		</ul>
+		</nav> </header>
+
+		<div id="signup-form">
+
+			<div id="signup-inner">
+
+				<div class="clearfix" id="header">
+
+					<img id="signup-icon" src="./images/signup.png" alt="" />
+
+					<h1>Add New Product</h1>
+
+
+				</div>
+				<p>Please complete the fields below.</p>
+				
+				<script>
+				function checkIt(evt) {
+					    evt = (evt) ? evt : window.event;
+					    var charCode = (evt.which) ? evt.which : evt.keyCode;
+					    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+						        status = "This field accepts numbers only.";
+								alert(status);
+						        return false;
+					    }
+					    status = "";
+					    return true;
+				}
+				</script>
+
+
+				<div class="clear padding20"></div>
+				<%
+					String name = null;
+					String serialNumber = null;
+					String description = null;
+					String type = null;
+					int dimensions;
+					int mass;
+					int weight;
+
+					int quantity;
+					int price;
+
+					String results;
+					List<String> storeNames = new ArrayList<String>();
+					List<String> supplierNames = new ArrayList<String>();
+				%>
+
+				<%
+					name = description = serialNumber = type = "";
+					dimensions = mass = weight = quantity = price = 0;
+					results = null;
+				%>
+
+				<%
+					results = (String) request.getAttribute("error");
+					if (results != null) {
+						if (results.equals("null value"))
+							out.print("<font color='red'><div class='error_box none' style='display: block;width:200px; '> There is/are empty field/fields </div></font>");
+
+						name = (String) request.getAttribute("name");
+						description = (String) request.getAttribute("description");
+						serialNumber = (String) request.getAttribute("serialNumber");
+						type = (String) request.getAttribute("type");
+						dimensions = (Integer) request.getAttribute("dimensions");
+						mass = (Integer) request.getAttribute("mass");
+						weight = (Integer) request.getAttribute("weight");
+						price = (Integer) request.getAttribute("price");
+						quantity = (Integer) request.getAttribute("quantity");
+					}
+					storeNames = (List<String>) request.getAttribute("storeNames");
+					
+					supplierNames = (List<String>) request.getAttribute("supplierNames");
+				%>
+
+				<form action="AddProduct" method="post">
+
+					<p>
+						<%
+							out.print("<label for='name'>Name *</label> <input id='name'type='text' name='name' value='"
+									+ name + "' />");
+						%>
+
+					</p>
+					
+					
+					<p>
+						<%
+							out.print("<label for='serialNumber'>Serial Number *</label> <input id='serialNumber'type='text' name='serialNumber' value='"
+									+ serialNumber + "' />");
+						%>
+
+					</p>
+					
+
+					<%
+						if (results == "product exists") {
+							out.print("<font color='red'><div class='error_box none' style='display: block;width:300px; '> This product already exists</div></font>");
+						}
+					%>
+
+
+					<p>
+						<%
+							out.print("<label for='description'>Description *</label> <input id='description'type='text' name='description' value='"
+									+ description + "' />");
+						%>
+					</p>
+					
+					
+					<p>
+						<%
+							out.print("<label for='type'>Type </label> <input id='type'type='text' name='type' value='"
+									+ type + "' />");
+						%>
+					</p>
+					
+					
+					<p>
+						<%
+// 							if (weight == 0)
+// 								out.print("<label for='weight'>Weight </label> <input id='weight'type='text' name='weight' value='"
+// 										+ "" + "' onkeypress='return checkIt(event)' />");
+// 							else
+								out.print("<label for='weight'>Weight </label> <input id='weight'type='text' name='weight' value='"
+									+ weight + "' onkeypress='return checkIt(event)' />");
+						%>
+					</p>
+					
+					
+					<p>
+						<%
+// 						if (dimensions == 0)
+// 							out.print("<label for='weight'>Weight </label> <input id='weight'type='text' name='weight' value='"
+// 									+ "" + "' onkeypress='return checkIt(event)' />");
+// 						else
+							out.print("<label for='dimensions'>Dimensions </label> <input id='dimensions'type='text' name='dimensions' value='"
+								+ dimensions + "' onkeypress='return checkIt(event)' />");
+						%>
+					</p>
+					
+					
+					<p>
+						<%
+// 						if (mass == 0)
+// 							out.print("<label for='weight'>Weight </label> <input id='weight'type='text' name='weight' value='"
+// 									+ "" + "' onkeypress='return checkIt(event)' />");
+// 						else
+							out.print("<label for='mass'>Mass </label> <input id='mass'type='text' name='mass' value='"
+								+ mass + "' onkeypress='return checkIt(event)' />");
+						%>
+					</p>
+
+										
+					<p>
+						<label for='store'>Store * </label>
+								<select name="prstore" id="prstore">
+									<%
+ 		//							if (storeNames != null) {
+										if (!storeNames.isEmpty()) {
+											for (String store : storeNames) {
+												out.print("<option value='" + store + "'>" + store + "</option>");
+											}
+										}
+ 		//							}
+									%>
+								</select>
+					</p>
+						
+					<p>
+						<%
+// 						if (quantity == 0)
+// 							out.print("<label for='weight'>Weight </label> <input id='weight'type='text' name='weight' value='"
+// 									+ "" + "' onkeypress='return checkIt(event)' />");
+// 						else
+							out.print("<label for='quantity'>Quantity </label> <input id='quantity'type='text' min='1' name='quantity' value='"
+								+ quantity + "' onkeypress='return checkIt(event)' />");
+						%>
+					</p>
+					
+					<p>
+						<label for='supplier'>Supplier * </label>
+								<select name="prsupplier" id="prsupplier">
+									<%
+ 		//							if (storeNames != null) {
+										if (!supplierNames.isEmpty()) {
+											for (String supplier : supplierNames) {
+												out.print("<option value='" + supplier + "'>" + supplier + "</option>");
+											}
+										}
+ 		//							}
+									%>
+								</select>
+					</p>
+						
+					<p>
+						<%
+// 						if (price == 0)
+// 							out.print("<label for='weight'>Weight </label> <input id='weight'type='text' name='weight' value='"
+// 									+ "" + "' onkeypress='return checkIt(event)' />");
+// 						else
+							out.print("<label for='price'>Price </label> <input id='price'type='text' name='price' value='"
+								+ price + "' onkeypress='return checkIt(event)' />");
+						%>
+					</p>
+					
+
+					<p>
+						<button id="submit" type="submit">Submit</button>
+					</p>
+
+
+				</form>
+
+
+				<div id="required">
+					<p>
+						* Required Fields<br />
+					</p>
+				</div>
+
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+	<div class="divide-top">
+		<footer class="grid-wrap">
+		<ul class="grid col-one-third social">
+
+			<li><a href="https://www.facebook.com">Facebook</a></li>
+			<li><a href="https://www.twitter.com">Twitter</a></li>
+			<li><a href="https://plus.google.com">Google+</a></li>
+			<li><a href="https://www.flickr.com">Flickr</a></li>
+		</ul>
+
+		<div class="up grid col-one-third ">
+			<a href="#navtop" title="Go back up">&uarr;</a>
+		</div>
+
+		<nav class="grid col-one-third ">
+		<ul>
+			<li><a href="index.html">Home</a></li>
+			<li><a href="about.html">Our Company</a></li>
+			<li><a href="services.html">Services</a></li>
+			<li><a href="works.html">Works</a></li>
+			<li><a href="contact.html">Contact</a></li>
+			<li><a href="register.html">Register</a></li>
+
+		</ul>
+		</nav> </footer>
+	</div>
+
+
+</body>
